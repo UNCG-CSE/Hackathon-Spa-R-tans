@@ -1,0 +1,136 @@
+---
+title: "TotalConsumptionChart1"
+author: "Jazarai Sturdivant"
+date: "11/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Questions to be explored: 
+
+What is the total amount of energy being consumed??
+By type of use(what types of tasks?)
+By building
+By room
+By region of the campus
+By time of day (hours or qualitative description of time, during business hours/not)
+
+Mowgli- Does the time period of the construction of the building relate to energy consumption?
+
+
+
+```{r libraries}
+
+library(readr)
+library(here)
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+
+```
+
+## What is the total amount of energy being consumed? 
+
+
+```{r }
+
+Baseball_results <- read_csv(here("Data", "Baseball_results.csv"))
+str(Baseball_results)
+                             
+```
+```{r }
+#Create table by year of consumption
+my2015Baseball_results <- Baseball_results %>%
+  select(Datetime, Actual, Predicted)%>%
+  filter(year(Datetime) == "2015")
+
+#View(myBaseball_results)      
+
+```
+
+
+```{r}
+
+EnergyConsumption15 <- ggplot(Baseball_results)+
+  geom_col(aes(x = Datetime, y = Actual), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
+  geom_col(aes(x = Datetime, y = Predicted), colour = "#0f2044") #using UNCG blue rgb(15,32,68)
+
+EnergyConsumption15
+
+# Need to add filter for each or the time units (will interactivity allow for this?)
+
+```
+
+
+
+
+```{r}
+
+TotalConsumption <- Baseball_results %>%
+  select(Datetime, Actual, Predicted)%>%
+  group_by(Year = year(Datetime)) %>%
+  summarize(TotalConsumed = sum(Actual), TotalPrediction = sum(Predicted))
+
+TotalConsumption
+
+```
+
+
+```{r}
+
+CumulativeConsumption <- ggplot(TotalConsumption)+    #Using UNCG grey
+  geom_col(aes(x = Year, y = TotalConsumed), colour = "#0f2044") +    #Using UNCG Blue
+  geom_col(aes(x = Year, y = TotalPrediction), colour = "#bec0c2")      #Using UNCG Grey rgb(190,192,194)
+
+
+CumulativeConsumption
+
+
+```
+
+
+```{r}
+
+TimeEnergyConsumption15 <- ggplot(Baseball_results)+
+  geom_point(aes(x = Datetime, y = Actual), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
+  geom_col(aes(x = Datetime, y = Predicted), colour = "#0f2044") #using UNCG blue rgb(15,32,68)
+
+TimeEnergyConsumption15
+
+
+```
+
+
+```{r}
+AVerageEnergyConsumption <- Baseball_results %>%
+  select(Datetime, Actual, Predicted)%>%
+  group_by(Year = year(Datetime)) %>%
+  summarize(AverageConsumed = mean(Actual), AveragePredicted = mean(Predicted))
+
+AVerageEnergyConsumption
+
+```
+
+
+
+```{r}
+
+HourlyEnergyConsumption15 <- ggplot(AVerageEnergyConsumption)+
+  geom_point(aes(x = Year, y = AverageConsumed), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
+  geom_point(aes(x = Year, y = AveragePredicted), colour = "#0f2044") #using UNCG blue rgb(15,32,68)
+
+HourlyEnergyConsumption15
+
+
+
+```
+
+
+
+
+
+
+

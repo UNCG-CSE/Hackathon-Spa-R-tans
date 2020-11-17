@@ -1,0 +1,6 @@
+"0",""
+"0","HourlyEnergyConsumption15 <- ggplot(AVerageEnergyConsumption)+"
+"0","  geom_point(aes(x = Year, y = AverageConsumed), colour = ""#ffb71b"") +    #using UNCG gold rgb(255,183,27)"
+"0","  geom_point(aes(x = Year, y = AveragePredicted), colour = ""#0f2044"") #using UNCG blue rgb(15,32,68)"
+"0",""
+"0","HourlyEnergyConsumption15"

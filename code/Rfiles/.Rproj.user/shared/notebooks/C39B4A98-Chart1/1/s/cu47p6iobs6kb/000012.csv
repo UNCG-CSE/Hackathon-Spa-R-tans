@@ -1,0 +1,6 @@
+"0",""
+"0","EnergyConsumption15 <- ggplot(Baseball_results)+"
+"0","  geom_col(aes(x = Datetime, y = Actual), colour = ""#ffb71b"") +    #using UNCG gold rgb(255,183,27)"
+"0","  geom_col(aes(x = Datetime, y = Predicted), colour = ""#0f2044"") #using UNCG blue rgb(15,32,68)"
+"0",""
+"0","EnergyConsumption15"

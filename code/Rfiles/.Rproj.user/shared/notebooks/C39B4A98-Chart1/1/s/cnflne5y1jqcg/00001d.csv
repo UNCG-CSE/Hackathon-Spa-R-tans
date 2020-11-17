@@ -1,0 +1,7 @@
+"0",""
+"0","CumulativeConsumption <- ggplot(TotalConsumption)+    #Using UNCG grey"
+"0","  geom_col(aes(x = Year, y = TotalConsumed), colour = ""#0f2044"") +    #Using UNCG Blue"
+"0","  geom_col(aes(x = Year, y = TotalPrediction), colour = ""#bec0c2"")      #Using UNCG Grey rgb(190,192,194)"
+"0",""
+"0",""
+"0","CumulativeConsumption"
