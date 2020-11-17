@@ -21,7 +21,7 @@ one_file = read_csv("C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall20
 glimpse(one_file)
 
 ```
-
+We will need the building name as well as the specific meter
 Ok so each file format should be the same. The only thing that is missing "building name". I think at first, I'll just try to combine all the files using a for loop.
 
 After that is working, adjust the forloop to add the file name. If you notice, they way the file names are formated .. __*building name*_reults.csv__
@@ -61,7 +61,7 @@ glimpse(data)
 ```
 
 Now we have 3.6 million observations! 
-
+Phenomenal!
 How many data points in each building?
 
 ```{r}
