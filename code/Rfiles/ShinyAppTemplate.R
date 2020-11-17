@@ -3,6 +3,10 @@
 library(shiny)
 library(shinydashboard)
 
+
+# this is a test thingy
+
+
 ui <- dashboardPage(
   
   dashboardHeader(title = "Energy Consumption"),
