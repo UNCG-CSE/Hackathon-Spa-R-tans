@@ -18,17 +18,18 @@ By room
 By region of the campus
 By time of day (hours or qualitative description of time, during business hours/not)
 
-Mowgli- Does the time period of the construction of the building relate to energy consumption?
-
+*Mowgli- Does the time period of the construction of the building relate to energy consumption?
+*
 
 
 ```{r libraries}
-
 library(readr)
 library(here)
 library(ggplot2)
 library(tidyverse)
 library(lubridate)
+library(scales)
+library(plotly)
 
 ```
 
@@ -36,9 +37,9 @@ library(lubridate)
 
 
 ```{r }
-
-Baseball_results <- read_csv(here("Data", "Baseball_results.csv"))
-str(Baseball_results)
+#Importing data
+Baseball_results <- read_csv("Data/TheirData/Baseball_results.csv")
+View(Baseball_results)
                              
 ```
 ```{r }
@@ -81,9 +82,9 @@ TotalConsumption
 
 ```{r}
 
-CumulativeConsumption <- ggplot(TotalConsumption)+    #Using UNCG grey
-  geom_col(aes(x = Year, y = TotalConsumed), colour = "#0f2044") +    #Using UNCG Blue
-  geom_col(aes(x = Year, y = TotalPrediction), colour = "#bec0c2")      #Using UNCG Grey rgb(190,192,194)
+CumulativeConsumption <- ggplot(TotalConsumption)+
+  geom_line(aes(x = Year, y = TotalConsumed), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
+  geom_line(aes(x = Year, y = TotalPrediction), colour = "#0f2044")
 
 
 CumulativeConsumption
@@ -95,8 +96,10 @@ CumulativeConsumption
 ```{r}
 
 TimeEnergyConsumption15 <- ggplot(Baseball_results)+
-  geom_point(aes(x = Datetime, y = Actual), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
-  geom_col(aes(x = Datetime, y = Predicted), colour = "#0f2044") #using UNCG blue rgb(15,32,68)
+  geom_col(aes(x = Datetime, y = Actual), colour = "#ffb71b") +    #using UNCG gold rgb(255,183,27)
+  geom_col(aes(x = Datetime, y = Predicted), colour = "#0f2044")+ #using UNCG blue rgb(15,32,68)
+scale_y_continuous(labels = paste0(ylab, "K"),
+                     breaks = 10^6 * ylab)
 
 TimeEnergyConsumption15
 
@@ -105,12 +108,12 @@ TimeEnergyConsumption15
 
 
 ```{r}
-AVerageEnergyConsumption <- Baseball_results %>%
+AverageEnergyConsumption <- Baseball_results %>%
   select(Datetime, Actual, Predicted)%>%
   group_by(Year = year(Datetime)) %>%
   summarize(AverageConsumed = mean(Actual), AveragePredicted = mean(Predicted))
 
-AVerageEnergyConsumption
+AverageEnergyConsumption
 
 ```
 
@@ -127,7 +130,6 @@ HourlyEnergyConsumption15
 
 
 ```
-
 
 
 

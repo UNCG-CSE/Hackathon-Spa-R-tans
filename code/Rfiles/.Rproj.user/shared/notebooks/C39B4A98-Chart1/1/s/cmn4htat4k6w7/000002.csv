@@ -1,6 +1,0 @@
-"0","AVerageEnergyConsumption <- Baseball_results %>%"
-"0","  select(Datetime, Actual, Predicted)%>%"
-"0","  group_by(Year = year(Datetime)) %>%"
-"0","  summarize(AverageConsumed = mean(Actual), AveragePredicted = mean(Predicted))"
-"0",""
-"0","AVerageEnergyConsumption"
