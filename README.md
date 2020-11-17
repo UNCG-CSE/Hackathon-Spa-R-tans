@@ -28,6 +28,8 @@ Mowgli - Wrote code that would read file names from data directory and combine a
 
 # Day 2
 ---
+Mowgli - Need to adjust the file script, since some file names containe 2 underscores, resulting in combined observations. For example the SRC building. 
+
 
 # Day 3
 ---
