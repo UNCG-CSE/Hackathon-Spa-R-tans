@@ -11,7 +11,7 @@ Jaz- Created working sample dashboard template with Rshiny App, Determined metho
 
 Mowgli - Wrote code that would read file names from data directory and combine all data into one data frame (3.6 million observations). This file was too large to push to github, so the file produced was ignored. The forloop still useful for "furture" / incoming data. Script also parses building name from file name, by removing *_results.csv* from file name
 
-### Next step:                                                                          STATUS
+### Next step:                                                                          (STATUS)
 - Parse useful information from dates                                         (complete for single file)
 - Begin Visualisation                                                         (complete for single file)
 - Begin building shiny to house visualizations                                          (started)
