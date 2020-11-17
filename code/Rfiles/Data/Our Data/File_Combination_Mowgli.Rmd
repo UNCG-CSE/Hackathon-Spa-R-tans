@@ -34,6 +34,7 @@ After that is working, adjust the forloop to add the file name. If you notice, t
 # Don't forget, this is my own directory, we need to change this later to work with the data directly from github if possible
 #
 directory = "C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/"
+
 file_names <- dir(directory) # get file names of the directory
 
 data = NULL # to store the results of our data late
@@ -43,7 +44,7 @@ for (i in file_names){ # for each file in the directory (i)
   data_temp = read_csv(local_path) # read in thee data
   data_temp['building'] = i # create a new variable in the data of the file name -> since this contains building name
   # this "building name" would read baseball_results.csv 
-  data_temp['building'] = sub("_.*","",data_temp$building) # I replace _results.csv with "" (empty) leaving only the building name left
+  data_temp['building'] = sub("_results.*","",data_temp$building) # I replace _results.csv with "" (empty) leaving only the building name left
   data = bind_rows(data,data_temp) # bind results to dataframe outside of the loop. 
 }
 
@@ -72,4 +73,35 @@ data %>% group_by(building) %>% count(sort = T)
 
 Next thing I could do is parse the dates, for month, day, week, etc...
 
+
+
+```{r}
+
+p_load(readxl)
+labels = read_xlsx("C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/Meter Names and Labels.xlsx",col_types = "text",trim_ws = T)
+
+
+labels$Label[labels$Name == str_starts(pattern = "spencer")] 
+
+
+labels['better_labels'] = gsub("'","",labels$Name,)
+
+labels <- labels %>%  mutate(Name = case_when(
+  Label == ' \'Spencer\' - \"Spencer Hall\"'	~  "Spencer",
+  TRUE ~ as.character(Name)
+  
+)) %>%
+  mutate(better_labels = trimws(better_labels, which = "both"))
+
+labels
+  
+```
+
+
+```{r}
+
+labels['test_test'] = gsub("'","",labels$Name,)
+
+labels$test_test
+```
 
