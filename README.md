@@ -7,6 +7,7 @@ We will be using R and Rshiny to build and deploy our dashboard. **May the best 
 
 # Day 1 (Start Day)
 ---
+Jaz-
 
 # Day 2
 ---
