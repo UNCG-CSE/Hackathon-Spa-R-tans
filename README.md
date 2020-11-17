@@ -9,9 +9,13 @@ We will be using R and Rshiny to build and deploy our dashboard. **May the best 
 ---
 Jaz-
 
-Mowgli - Today I aim to create a loop that will join all the data together into one file/one table (write and export that csv to make things easier)
+Mowgli - Wrote code that would read file names from data directory and combine all data into one data frame (3.6 million observations). This file was too large to push to github, so the file produced was ignored. The forloop still useful for "furture" / incoming data. Script also parses building name from file name, by removing *_results.csv* from file name
 
-Thinking about the future, we'll need to keep the file combination forloop in the code, but for working purposes, we'll just work off of one file... if that make sense...?
+### Next step:
+- Parse useful information from dates
+- Begin Visualisation 
+- Begin building shiny to house visualizations
+- Find a place to store "combined_results" ?
 
 # Day 2
 ---
