@@ -19,24 +19,35 @@ Parse useful information from dates |                                complete fo
  Begin building shiny to house visualizations |                                         started
  Find a place to store "combined_results" ? |                                  Very large file, perhaps we'll just point to raw data. 
  Ask about external source data usage |                                        completed
- Customize Fonts to align with University Brand |                              in progress...waiting for a reasonable time to send already typed message :))
- Apply single file visualization to combined File Visualizations |             to be started
+ Customize Fonts to align with University Brand |                              completed
+ Apply single file visualization to combined File Visualizations |             completed
  Organize Story to be of interest to students, staff, and community |          to be started
- Generalize/parametrize code to accept updated files |                         to be started
+ Generalize/parametrize code to accept updated files |                         completed
  Discuss/Revise Appropriate enhanced visualizations |                          to be started
  Add detail to graphs, determine appropriate tables, and boxes to add |        to be continued
- DEBUG color issue with second geom_col chart |                                to be started
- Add way to indicate specific meter |                                          combined file created...append new column)?
+ DEBUG color issue with second geom_col chart |                                completed
+ Add way to indicate specific meter |                                          completed
+ ShinyApp file (SpaRtanApp.R) discussion                                       to be started
+ Additional aggregation variables?                                             to be started/discussed
 
 # Day 2
 ---
 Mowgli - Adjusted file script to clean label names and inner-join them to larger dataframe with the correct building labels. 
 Also generalized the date parse to clean all the dates once its merged
 
+Jaz- Created Shiny Application with minimum input and output variables, Created r markdown file document for documentation of process for presentation, Debug/Traceback Crash error in Rstudiocloud (Is the file just too big to process?)
+
 ### Tasks for tomorow
-- [ ] pick up with shiny
+- [ ] pick up with shiny (review the SpaRtanApp.R file in Github)
 - [ ] clone data into our own repo, create credentials to read data remotely. 
 - [ ] Research/locate building descriptions / longitude and latitude
+- [ ] Plot with user input in shiny (research/discuss)
+- [!] Should we add a building type column to dataframe? (Academic/NonAcademic Factor, or Libraries, lecture-halls, residence hall, student center, dining hall, athletic, etc)?
+- [!] How will date be selected by user? (Range, specific date, both?)
+- [!] Determine Input and Output variables for Shiny App
+- [ ] Story of interest to students, staff and community
+- [ ] Map of Campus?
+- [ ] Palette of Colors for 81 buildings?
 # Day 3
 ---
 
