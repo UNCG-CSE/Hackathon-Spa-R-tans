@@ -48,6 +48,7 @@ Jaz- Created Shiny Application with minimum input and output variables, Created 
 - [ ] Story of interest to students, staff and community
 - [ ] Map of Campus?
 - [ ] Palette of Colors for 81 buildings?
+- [ ] Get data in repo
 # Day 3
 ---
 
