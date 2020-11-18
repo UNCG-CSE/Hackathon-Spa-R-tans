@@ -11,7 +11,7 @@ First we need to read in the data, at least one file, to see what it looks like
 
 ```{r}
 if (!require(pacman)) install.packages("pacman") 
-pacman::p_load(tidyverse,readr)
+pacman::p_load(tidyverse,readr,lubridate)
 
 # Don't forget, this is my own directory, we need to change this later to work with the data directly from github if possible
 
@@ -39,7 +39,10 @@ file_names <- dir(directory) # get file names of the directory
 
 data = NULL # to store the results of our data late
 
-for (i in file_names){ # for each file in the directory (i)
+for (i in file_names){# for each file in the directory (i)
+   if (i == "Meter Names and Labels.xlsx"){
+     next
+   }
   local_path = paste(directory, i, sep = "") # "glue"/paste the directory and file name
   data_temp = read_csv(local_path) # read in thee data
   data_temp['building'] = i # create a new variable in the data of the file name -> since this contains building name
@@ -47,6 +50,8 @@ for (i in file_names){ # for each file in the directory (i)
   data_temp['building'] = sub("_results.*","",data_temp$building) # I replace _results.csv with "" (empty) leaving only the building name left
   data = bind_rows(data,data_temp) # bind results to dataframe outside of the loop. 
 }
+
+
 
 #write.csv(data,"combined_results.csv") # this will write the csv. 
 
@@ -71,9 +76,7 @@ data %>% group_by(building) %>% count(sort = T)
 
 ```
 
-Next thing I could do is parse the dates, for month, day, week, etc...
-
-
+Here we read in the labels and clean up the labels so that we can join them with the larger data later. 
 
 ```{r}
 
@@ -81,27 +84,48 @@ p_load(readxl)
 labels = read_xlsx("C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/Meter Names and Labels.xlsx",col_types = "text",trim_ws = T)
 
 
-labels$Label[labels$Name == str_starts(pattern = "spencer")] 
 
+labels['better_name'] = gsub("'","",labels$Name,) # gsub will replace all ' <- with "" (empty)
 
-labels['better_labels'] = gsub("'","",labels$Name,)
+labels <- labels %>%  mutate(better_name = case_when(
+  str_detect(Label,"North & South Spencer Residence Hall")	~  "Spencer", # the 'name' on the label set is different than the file name. This will detect if the character matches and change it to desried string -> one that matches the file name.  
+  str_detect(Name,"JacksonLibraryTower_kWh") ~ "JacksonLibraryTower",
+  TRUE ~ as.character(better_name))) %>% # returns the names as normal
+  mutate(better_name = str_trim(better_name, side = "both")) # remove white space on bothsides of the word
 
-labels <- labels %>%  mutate(Name = case_when(
-  Label == ' \'Spencer\' - \"Spencer Hall\"'	~  "Spencer",
-  TRUE ~ as.character(Name)
-  
-)) %>%
-  mutate(better_labels = trimws(better_labels, which = "both"))
-
-labels
   
 ```
 
+
+This will join the tables/dataframe also create year, month, day of the month, week of the year and day of the week columns. 
 
 ```{r}
 
-labels['test_test'] = gsub("'","",labels$Name,)
+data <- data %>% inner_join(labels, by = c("building" = "better_name")) %>% select(-c(building,Name)) # inner join on the names. 
 
-labels$test_test
+data <- data %>% mutate("Year" = year(Datetime), #create year variable
+                "Month" = month(Datetime), #create month variable
+                "Day of the month" = day(Datetime),  #create day of the month variable
+                "Week of the year" = week(Datetime),  #create week of the year variable 
+                "Day of the week" = wday(Datetime, label = T)) #create day of the week variable
+
+
+# The following code is just to verify that we did everything right. For example, shoud have 7 days in a week, 31 days in a month, 53 weeks in a year.. etc
+
+data %>%  distinct(Year) %>% arrange(Year)
+data %>%  distinct(Month) %>% arrange(Month)
+data %>%  distinct(`Week of the year`) %>% arrange(`Week of the year`)
+data %>%  distinct(`Day of the month`) %>% arrange(`Day of the month`)
+data %>%  distinct(`Day of the week`) %>% arrange(`Day of the week`)
 ```
+
+Next is to get lon and lat of buildings? 
+Also get dimentions of the buildings? 
+Also need to find a place to put the data, so that we can easily retrive it -> git large file storage? 
+
+```{r}
+#write.csv(data,"combined_results.csv") # this will write the csv. 
+
+```
+
 
