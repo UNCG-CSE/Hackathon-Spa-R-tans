@@ -34,8 +34,8 @@ Mowgli - Adjusted file script to clean label names and inner-join them to larger
 Also generalized the date parse to clean all the data once its merged
 
 ### Tasks for tomorow
-- [] pick up with shiny
-- [] clone data into our own repo, create credentials to read data remotely. 
+- [ ] pick up with shiny
+- [ ] clone data into our own repo, create credentials to read data remotely. 
 
 # Day 3
 ---
