@@ -31,12 +31,12 @@ Parse useful information from dates |                                complete fo
 # Day 2
 ---
 Mowgli - Adjusted file script to clean label names and inner-join them to larger dataframe with the correct building labels. 
-Also generalized the date parse to clean all the data once its merged
+Also generalized the date parse to clean all the dates once its merged
 
 ### Tasks for tomorow
 - [ ] pick up with shiny
 - [ ] clone data into our own repo, create credentials to read data remotely. 
-
+- [ ] Research/locate building descriptions / longitude and latitude
 # Day 3
 ---
 
