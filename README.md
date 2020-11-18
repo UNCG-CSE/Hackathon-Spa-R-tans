@@ -14,24 +14,28 @@ Mowgli - Wrote code that would read file names from data directory and combine a
 ### Next steps:
 Tasks | (STATUS)
 ----- | -------
-Parse useful information from dates                                         (complete for single file)
- Begin Visualisation                                                         (complete for single file)
- Begin building shiny to house visualizations |                                         (started)
+Parse useful information from dates |                                complete for single file
+ Begin Visualisation |                                                         complete for single file
+ Begin building shiny to house visualizations |                                         started
  Find a place to store "combined_results" ? |                                  Very large file, perhaps we'll just point to raw data. 
- Ask about external source data usage |                                        (completed)
- Customize Fonts to align with University Brand |                              (in progress...waiting for a reasonable time to send already typed message :))
- Apply single file visualization to combined File Visualizations |             (to be started)
- Organize Story to be of interest to students, staff, and community |          (to be started)
- Generalize/parametrize code to accept updated files |                         (to be started)
- Discuss/Revise Appropriate enhanced visualizations |                          (to be started)
- Add detail to graphs, determine appropriate tables, and boxes to add |        (to be continued)
- DEBUG color issue with second geom_col chart |                                (to be started)
- Add way to indicate specific meter |                                          (combined file created...append new column)?
+ Ask about external source data usage |                                        completed
+ Customize Fonts to align with University Brand |                              in progress...waiting for a reasonable time to send already typed message :))
+ Apply single file visualization to combined File Visualizations |             to be started
+ Organize Story to be of interest to students, staff, and community |          to be started
+ Generalize/parametrize code to accept updated files |                         to be started
+ Discuss/Revise Appropriate enhanced visualizations |                          to be started
+ Add detail to graphs, determine appropriate tables, and boxes to add |        to be continued
+ DEBUG color issue with second geom_col chart |                                to be started
+ Add way to indicate specific meter |                                          combined file created...append new column)?
 
 # Day 2
 ---
-Mowgli - Need to adjust the file script, since some file names containe 2 underscores, resulting in combined observations. For example the SRC building. 
+Mowgli - Adjusted file script to clean label names and inner-join them to larger dataframe with the correct building labels. 
+Also generalized the date parse to clean all the data once its merged
 
+### Tasks for tomorow
+- [] pick up with shiny
+- [] clone data into our own repo, create credentials to read data remotely. 
 
 # Day 3
 ---
