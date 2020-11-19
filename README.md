@@ -52,6 +52,11 @@ Jaz- Created Shiny Application with minimum input and output variables, Created 
 # Day 3
 ---
 
+- Mowgli looked into git lfs, or getting oauth for private repo set up with R. Deemed unnessesary, so jazzy copied the data over to our repo. 
+didn't do a whole lot today, sister-in-law birthday, and catching up on other project. Will continue the fight tomorow. 
+
+
+
 # Day 4
 ---
 
