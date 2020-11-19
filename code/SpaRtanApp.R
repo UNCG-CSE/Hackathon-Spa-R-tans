@@ -9,7 +9,20 @@ library(lubridate)
 #library(plotly)
 library(dplyr)
 
+#Data load#
+combined_results <- combined_results <- read_csv("combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
+#Defining User Choices for meter
+# meteruserchoices <- toString(c(unique(combined_results['Label'])))
+# meteruserchoices
 
+meteruserchoices2 <- unique(combined_results$Label)[1:14]
+#print(meteruserchoices2)
+
+#Defining User Choices for time
+yearuserchoices <- c(unique(year(combined_results$Datetime)))
+
+#
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
@@ -26,14 +39,14 @@ ui <- fluidPage(
                          since 2015 on UNCG's Campus"),
       
       #Radio button for unit of time
-      selectInput("time", 
+      selectInput("meter", 
                   
-                  label = "Choose a unit of time to display",
+                  label = "Choose a meter of time to display",
                   
-                  choices = c("hour", "day", "week", "month", "year"),
+                  choices = meteruserchoices2,
                   
-                  selected = "year")
-    ),
+                  selected = "choices")),
+    
     #timeInput("time3", "Time:", value = strptime("12:34:56", "%T")),
     
     #dateRangeInput("dates", h3("Date range")))
@@ -42,17 +55,15 @@ ui <- fluidPage(
     #           h3("Date input"), 
     #           value = "2014-01-01"))
     
-# Show a plot of the generated distribution
+    # Show a plot of the generated distribution
     mainPanel(
-
+      
       textOutput("selected_time")
       
       # plotOutput(outputId, width = "100%", height = "400px", click = NULL,
       #            dblclick = NULL, hover = NULL, hoverDelay = NULL,
       #            hoverDelayType = NULL, brush = NULL, clickId = NULL,
       #            hoverId = NULL, inline = FALSE)
-      
-      
       
     )
   )
@@ -61,26 +72,23 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  #Data load#
-  combined_results <- combined_results <- read_csv("/cloud/project/Code/Data/Baseball_results.csv", 
-                                                   col_types = cols(X1 = col_skip()))
+  
   #Defining Reactives#
-  #meteruserchoices <- array(unique(combined_results$building))
   #meteruserchoices
   
   output$selected_time <- renderText({
     
-    paste("You have selected this", input$time)
+    paste("You have selected this", input$meter)
   })
   
-  output$selected_staticplot1 <- renderPlot({
-    hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
-         xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  # output$selected_staticplot1 <- renderPlot({
+  #    hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+  #         xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  # 
+  #    dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  #    lines(dens, col = "blue")
+  #  })
 
-    dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-    lines(dens, col = "blue")
-  })
-  
   # output$selected_interactiveplot1 <- renderPlot({
   #   hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
   #        xlab = "Duration (minutes)", main = "Geyser eruption duration")
