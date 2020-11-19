@@ -48,14 +48,23 @@ Jaz- Created Shiny Application with minimum input and output variables, Created 
 - [ ] Story of interest to students, staff and community
 - [ ] Map of Campus?
 - [ ] Palette of Colors for 81 buildings?
-- [ ] Get data in repo
+- [X] Get data in repo
 # Day 3
 ---
 
 - Mowgli looked into git lfs, or getting oauth for private repo set up with R. Deemed unnessesary, so jazzy copied the data over to our repo. 
 didn't do a whole lot today, sister-in-law birthday, and catching up on other project. Will continue the fight tomorow. 
 
-
+-Jaz created user choices, debugged app
+### Tasks for tomorow
+- [ ] pick up with shiny (review the SpaRtanApp.R file in Github)
+- [ ] Plot with user input in shiny (research/discuss)
+- [] Add building type column to dataframe? (Academic/NonAcademic Factor, or Libraries, lecture-halls, residence hall, student center, dining hall, athletic, etc)?
+- [!] How will date be selected by user? (Range, specific date, both?)
+- [!] Determine Input and Output variables for Shiny App
+- [ ] Story of interest to students, staff and community
+- [ ] Map of Campus?
+- [ ] Palette of Colors for 81 buildings?
 
 # Day 4
 ---
