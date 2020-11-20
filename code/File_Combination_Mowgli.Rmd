@@ -13,6 +13,8 @@ First we need to read in the data, at least one file, to see what it looks like
 if (!require(pacman)) install.packages("pacman") 
 pacman::p_load(tidyverse,readr,lubridate)
 
+
+
 # Don't forget, this is my own directory, we need to change this later to work with the data directly from github if possible
 
 
@@ -91,9 +93,13 @@ labels <- labels %>%  mutate(better_name = case_when(
   str_detect(Label,"North & South Spencer Residence Hall")	~  "Spencer", # the 'name' on the label set is different than the file name. This will detect if the character matches and change it to desried string -> one that matches the file name.  
   str_detect(Name,"JacksonLibraryTower_kWh") ~ "JacksonLibraryTower",
   TRUE ~ as.character(better_name))) %>% # returns the names as normal
-  mutate(better_name = str_trim(better_name, side = "both")) # remove white space on bothsides of the word
+  mutate(better_name = str_trim(better_name, side = "both"),
+         "better_label" =gsub("'","",labels$Label))%>% 
+  mutate(better_label = str_trim(better_label,side = "both"))# remove white space on bothsides of the word
 
-  
+
+
+
 ```
 
 
@@ -125,6 +131,8 @@ Also need to find a place to put the data, so that we can easily retrive it -> g
 
 ```{r}
 #write.csv(data,"combined_results.csv") # this will write the csv. 
+
+#getwd()
 
 ```
 
