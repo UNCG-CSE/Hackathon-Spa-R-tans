@@ -69,6 +69,12 @@ didn't do a whole lot today, sister-in-law birthday, and catching up on other pr
 # Day 4
 ---
 
+- Mowgli - jazzy's shiny app ran into utf8 errors... something still wrong with the labels. Fixed labels, and adjusted shiny to work with labels. 
+created new shinydashboard app (seperate file, as to not overwhelm other app, 100+ new lines) currently plot not rendering because user input not read correctly. 
+
+-[ ] either fix the plot issuse.
+-[ ] Adjust asthetics of the dashboard. 
+-[ ] Add pages/content to the dashbaord. 
 
 # Day 5
 ---
