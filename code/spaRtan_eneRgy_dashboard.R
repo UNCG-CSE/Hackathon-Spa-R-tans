@@ -1,0 +1,117 @@
+if (!require(pacman)) install.packages("pacman") 
+pacman::p_load(tidyverse,lubridate,shiny,shinydashboard)
+
+
+
+# NOTES and TASKS:
+
+
+## CURRENTLY APP IS RUNNING, BUT PLOT WILL NOT RENDER SINCE FILTER THINK NOT WORKING. PERHAPS NOT REDER PLOT, MAYBE RENDER DATASET OR SOMTHING idk!
+
+
+
+
+# reading in the data
+
+combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
+
+
+
+# Declare meter options
+
+meter_choices <- unique(combined_results$better_label) 
+
+
+# Declare Time options
+
+year_choices  <- unique(combined_results$Year)
+
+# Month of the year (1-12)
+month_choices <- unique(combined_results$Month)
+
+# Day of the month (1-31)
+day_month     <- unique(combined_results$`Day of the month`)
+
+# Week of the year (1-53)
+week_year    <- unique(combined_results$`Week of the year`)
+
+# Day of the week (Sun - Sat)
+day_week     <- unique(combined_results$`Day of the week`)
+
+
+# Define UI
+
+# What does the dashboard look like?
+
+ui <- dashboardPage(skin = "blue" , # find appropriate uncg color?
+                    
+                    ### HEADER ------------
+                    
+                    dashboardHeader(title = "Green Fund Hackathon: Energy Dashboard"), # Title of the dashboard
+                    
+                    ### SIDE BAR -----------
+                    
+                    dashboardSidebar( # declare a sidebar... hey R, theres a side bar!
+                      sidebarMenu( # now what does the sidebar contain? let's fill it with menu items
+                        
+                        # First arg is what is seen on the dashboard, Second indicates to output where to show output
+                        # icon is not needed, just adds a little icon. 
+                        
+                        menuItem("Task 1: What are we supposed to do?", tabName = "task_1", icon = icon("dashboard")),
+                        menuItem("Task 2: hmmmm... I forgot",  tabName = "task_2", icon = icon("signal"))
+                        
+                      )
+                    ),
+                    
+                    ### Body/Content ----------
+                    
+                    dashboardBody(
+                      tabItems(
+                        tabItem("task_1",# this links back to the sidebar item :) 
+                                fluidPage(
+                          h1("Insert text here, this is a heading one"), ## adding simple text...
+                          h3("heading 3... try h4, h2 etc..."),
+                          h3("now let's try to plot something"),
+                          # Creating a visual box for user input
+                          # First arg is what renderplot will use, second is what shows on the dashbooard
+                          # third are the designated choices
+                          box(plotOutput("meter_choice_plot"), width = "auto"),
+                          box(selectInput("meter_choice_box","Choose builing to display",meter_choices)))
+
+                        )
+                      ),
+                      
+                      tabItem("task_2", # leaving this page empty for now
+                              fluidPage(
+                                h1("this is an empty page")
+                              ))
+                    )
+                  )
+
+server <- function(input,output){
+  
+  # this plot will go the the "task_1" page :)
+  output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+    
+    # dplyr 2 ggplot so we can control which statistic they see, see below for example
+    
+    combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
+      # summarizeing the mean for actual and predicted
+      summarize("Mean_Energy_Actual_per_Year" = mean(Actual), "Mean_Energy_Predicted_per_Year" = mean(Predicted)) %>% 
+      
+      # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
+      filter(better_label == combined_results[[input$meter_choice_box]]) %>%  # THIS FILTER NOT WORKING
+      ggplot(aes(x = Year)) + # ggplot, year on x axis
+      geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
+      geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
+      theme_minimal()+ # random theme
+      labs(title = paste("Energy for... find a way to paste name here"), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      ylab("Mean Energy")   # render labels
+    
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
+
