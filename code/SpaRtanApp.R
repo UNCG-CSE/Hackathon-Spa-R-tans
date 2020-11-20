@@ -9,15 +9,36 @@ library(lubridate)
 #library(plotly)
 library(dplyr)
 
-#Data load#
-combined_results <- combined_results <- read_csv("combined_results.csv", 
-                                                 col_types = cols(X1 = col_skip()))
-#Defining User Choices for meter
-# meteruserchoices <- toString(c(unique(combined_results['Label'])))
-# meteruserchoices
+#install.packages("shinydashboard")
+library(shinydashboard) # using shinydashboard to add visuals, icons and make the app look good. 
 
-meteruserchoices2 <- unique(combined_results$Label)[1:14]
-#print(meteruserchoices2)
+
+# -------- you should try this package :)
+
+#if (!require(pacman)) install.packages("pacman") 
+#pacman::p_load(tidyverse,lubridate,shiny) #tidyverse already has dplyr and ggplot and readr. 
+
+#--------------------------------------------------------
+
+
+
+#------------------ Data load ----------
+
+#combined_results <- combined_results <- read_csv("combined_results.csv", col_types = cols(X1 = col_skip()))
+
+
+# --- This is mowgli's data read in, comment this out and read in your path above
+
+combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
+
+
+# If you run this, you'll see the unknown characters. 
+#unique(combined_results$Label) # better label take care of any clearning issues of the labels. 
+
+meter_choices <- unique(combined_results$better_label) # this works on mowglies end, changed to meter_choices
+
+
 
 #Defining User Choices for time
 yearuserchoices <- c(unique(year(combined_results$Datetime)))
@@ -43,7 +64,7 @@ ui <- fluidPage(
                   
                   label = "Choose a meter of time to display",
                   
-                  choices = meteruserchoices2,
+                  choices =meter_choices, # labels 1 - 50
                   
                   selected = "choices")),
     
@@ -104,6 +125,9 @@ server <- function(input, output) {
   
 }
 
+
 # Run the application 
+
 SparTanApp<-shinyApp(ui = ui, server = server)
+
 SparTanApp
