@@ -107,7 +107,6 @@ server <- function(input,output){
   
   
   # Reeactive function to filter the dataset
-  
   data_1 <- reactive({ # this is referenced in the ggplot. 
     data <- combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
@@ -116,13 +115,35 @@ server <- function(input,output){
       filter(better_label == input$meter_choice_box)
     
     data
-  
-    })
+    
+    
+  }
+    
+  data_2 <- reactive{ # this is referenced in the ggplot. 
+    data2 <- combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
+      # summarizeing the mean for actual and predicted
+      summarize("Mean_Energy_Actual_per_Year" = sum(Actual), "Mean_Energy_Predicted_per_Year" = sum(Predicted)) %>% 
+      # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
+      filter(better_label == input$meter_choice_box)
+    
+    data2
+  })
   
   # this plot will go the the "task_1" page :)
   output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
        
       ggplot(data_1(),aes(x = Year)) + # ggplot, year on x axis
+      geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
+      geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
+      theme_minimal()+ # random theme
+      labs(title = paste("Energy for... find a way to paste name here"), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      ylab("Mean Energy")   # render labels
+    
+  })
+  
+  output$meter_choice_plot2 <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+    
+    ggplot(data_2(),aes(x = Year)) + # ggplot, year on x axis
       geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
       geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
       theme_minimal()+ # random theme
