@@ -130,7 +130,13 @@ Also get dimentions of the buildings?
 Also need to find a place to put the data, so that we can easily retrive it -> git large file storage? 
 
 ```{r}
-#write.csv(data,"combined_results.csv") # this will write the csv. 
+
+
+# to conserve memory, let's get rid of the 'duplicate'.. not really dupe, names
+
+#combined_results <- combined_results %>% select(-c(Label))
+
+#write.csv(combined_results,"combined_results.csv") # this will write the csv. 
 
 #getwd()
 

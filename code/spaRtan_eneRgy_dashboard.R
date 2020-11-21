@@ -1,7 +1,8 @@
 if (!require(pacman)) install.packages("pacman") 
-pacman::p_load(tidyverse,lubridate,shiny,shinydashboard)
+pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
-
+#detach("package:shiny.semantic",unload = T)
+#detach("package:semantic.dashboard", unload = T)
 
 # NOTES and TASKS:
 
@@ -17,12 +18,19 @@ combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-
                                                  col_types = cols(X1 = col_skip()))
 
 
+glimpse(combined_results)
 
 # Declare meter options
 
-meter_choices <- unique(combined_results$better_label) 
+meter_choices = c()
+
+for( i in unique(combined_results$better_label)){
+  meter_choices = c(meter_choices,i)
+}
 
 
+
+str(meter_choices)
 # Declare Time options
 
 year_choices  <- unique(combined_results$Year)
@@ -44,7 +52,7 @@ day_week     <- unique(combined_results$`Day of the week`)
 
 # What does the dashboard look like?
 
-ui <- dashboardPage(skin = "blue" , # find appropriate uncg color?
+ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                     
                     ### HEADER ------------
                     
@@ -69,40 +77,49 @@ ui <- dashboardPage(skin = "blue" , # find appropriate uncg color?
                     dashboardBody(
                       tabItems(
                         tabItem("task_1",# this links back to the sidebar item :) 
-                                fluidPage(
+                                
                           h1("Insert text here, this is a heading one"), ## adding simple text...
                           h3("heading 3... try h4, h2 etc..."),
                           h3("now let's try to plot something"),
                           # Creating a visual box for user input
                           # First arg is what renderplot will use, second is what shows on the dashbooard
                           # third are the designated choices
-                          box(plotOutput("meter_choice_plot"), width = "auto"),
-                          box(selectInput("meter_choice_box","Choose builing to display",meter_choices)))
-
-                        )
+                         
+                         box(selectInput("meter_choice_box","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter")),
+                         box(plotOutput("meter_choice_plot"), width = "auto") 
+                        
                       ),
                       
                       tabItem("task_2", # leaving this page empty for now
-                              fluidPage(
-                                h1("this is an empty page")
-                              ))
+                              
+                              h1("this is an empty page"),
+                              box(selectInput("meter_choice_box","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter")),
+                              DT::dataTableOutput("thing")
+                              
+                              )
                     )
-                  )
+                  ))
 
 server <- function(input,output){
   
-  # this plot will go the the "task_1" page :)
-  output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
-    
-    # dplyr 2 ggplot so we can control which statistic they see, see below for example
-    
-    combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
+  
+  # Reeactive function to filter the dataset
+  
+  data_1 <- reactive({ # this is referenced in the ggplot. 
+    data <- combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual_per_Year" = mean(Actual), "Mean_Energy_Predicted_per_Year" = mean(Predicted)) %>% 
-      
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
-      filter(better_label == combined_results[[input$meter_choice_box]]) %>%  # THIS FILTER NOT WORKING
-      ggplot(aes(x = Year)) + # ggplot, year on x axis
+      filter(better_label == input$meter_choice_box)
+    
+    data
+  
+    })
+  
+  # this plot will go the the "task_1" page :)
+  output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+       
+      ggplot(data_1(),aes(x = Year)) + # ggplot, year on x axis
       geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
       geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
       theme_minimal()+ # random theme
@@ -110,7 +127,14 @@ server <- function(input,output){
       ylab("Mean Energy")   # render labels
     
   })
-}
+
+  output$thing <- renderDataTable({
+    data_2 <- data_1() 
+    
+    data_2
+  })
+  
+  }
 
 shinyApp(ui = ui, server = server)
 
