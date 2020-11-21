@@ -14,12 +14,15 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-                                                 col_types = cols(X1 = col_skip()))
-
+#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+#                                                 col_types = cols(X1 = col_skip()))
+combined_results <- read_csv("combined_results.csv", 
+                              col_types = cols(X1 = col_skip()))
 
 glimpse(combined_results)
 
+#getwd()
+#rm(combined_results2)
 # Declare meter options
 
 meter_choices = c()

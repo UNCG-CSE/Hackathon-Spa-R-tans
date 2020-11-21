@@ -35,7 +35,8 @@ After that is working, adjust the forloop to add the file name. If you notice, t
 
 # Don't forget, this is my own directory, we need to change this later to work with the data directly from github if possible
 #
-directory = "C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/"
+directory = "E:/GitHub/Hackathon-Spa-R-tans/data/"
+#directory = "C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/"
 
 file_names <- dir(directory) # get file names of the directory
 
@@ -53,9 +54,7 @@ for (i in file_names){# for each file in the directory (i)
   data = bind_rows(data,data_temp) # bind results to dataframe outside of the loop. 
 }
 
-
-
-#write.csv(data,"combined_results.csv") # this will write the csv. 
+#write.csv(data,"D:/Hackathon/Hackathon/combined_results.csv") # this will write the csv. 
 
 
 ```
@@ -83,7 +82,7 @@ Here we read in the labels and clean up the labels so that we can join them with
 ```{r}
 
 p_load(readxl)
-labels = read_xlsx("C:/Users/macia/Documents/MSIA-19/Git/Green_Hackathon-Fall2020/data/Analysis/Meter Names and Labels.xlsx",col_types = "text",trim_ws = T)
+labels = read_xlsx("E:/GitHub/Hackathon-Spa-R-tans/data/Meter Names and Labels.xlsx",col_types = "text",trim_ws = T)
 
 
 
@@ -134,10 +133,12 @@ Also need to find a place to put the data, so that we can easily retrive it -> g
 
 # to conserve memory, let's get rid of the 'duplicate'.. not really dupe, names
 
-#combined_results <- combined_results %>% select(-c(Label))
+data <- data %>% select(-c(Label))
 
-#write.csv(combined_results,"combined_results.csv") # this will write the csv. 
+#write.csv(data,"D:/Hackathon/Hackathon/combined_results.csv") # this will write the csv. 
+#glimpse(data)
 
+#rm(labels)
 #getwd()
 
 ```
