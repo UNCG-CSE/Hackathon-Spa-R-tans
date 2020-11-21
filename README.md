@@ -79,8 +79,15 @@ created new shinydashboard app (seperate file, as to not overwhelm other app, 10
 # Day 5
 ---
 
+Mowgli and jaz worked to get files sync'd up. added reactive data to plot and now we have a working plot (task 2..ish)--- missing the date input(fixed at Year level)
+
+Next is to build out the rest now that we have essential pieces. Also adding Quality of life features (color, font), and important text. 
+
+
 # Day 6
 ---
 
 # Day 7 (Final Day)
 ---
+
+# Day 8 ? (Actual final day?)
