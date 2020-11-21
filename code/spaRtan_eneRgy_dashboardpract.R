@@ -15,7 +15,7 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard)
 
 # combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
 #                                                  col_types = cols(X1 = col_skip()))
-combined_results <- read_csv("my_results.csv", 
+combined_results <- read_csv("combined_results.csv", 
                               col_types = cols(X1 = col_skip()))
 
 glimpse(combined_results)
