@@ -86,7 +86,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
               box(selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
                                                                                  "Week of the year","Month"),
                               selected = "Month"),
-                  selectInput("meter_choice_box_1","Choose Building",meter_choices,selected = "Elliott University Center (040) - Main Meter"),
+                  selectInput("meter_choice_box_1","Choose Building",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
                   selectInput("agg_level", "Choose sum or mean energy",
                               c("Mean_Energy_Actual","Mean_Energy_Predicted",
                                 "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted")),
@@ -111,7 +111,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
               
               box(selectInput("time_choice_box_3","Choose time aggregation", c("Day of the month",
                                                                                "Week of the year","Month"), selected = "Month")),
-              box(selectInput("meter_choice_box_3","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter")),
+              box(selectInput("meter_choice_box_3","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               
               box(plotOutput("meter_choice_plot_3"), width = "auto") 
               
@@ -120,7 +120,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
       tabItem("Data_Table", # leaving this page empty for now
               
               h1("this is an empty page"),
-              box(selectInput("meter_choice_box_4","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter")),
+              box(selectInput("meter_choice_box_4","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", , multiple = T)),
               DT::dataTableOutput("thing")
               
       )
