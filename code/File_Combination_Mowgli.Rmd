@@ -128,6 +128,10 @@ Next is to get lon and lat of buildings?
 Also get dimentions of the buildings? 
 Also need to find a place to put the data, so that we can easily retrive it -> git large file storage? 
 
+
+
+
+
 ```{r}
 
 
@@ -142,5 +146,15 @@ data <- data %>% select(-c(Label))
 #getwd()
 
 ```
+
+
+```{r}
+
+combined_results %>% select("Actual","Predicted","Hour","Month","better_label") %>% filter(better_label == "Baseball Stadium (177) - Main Meter") %>% gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
+  group_by(Time_Choice,Time_Label) %>% count(sort = T)
+
+
+```
+
 
 

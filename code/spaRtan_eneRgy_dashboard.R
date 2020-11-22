@@ -34,8 +34,6 @@ for( i in unique(combined_results$better_label)){
 }
 
 
-combined_results_ <- combined_results %>% gather()
-
 
 str(meter_choices)
 # Declare Time options
@@ -131,9 +129,9 @@ server <- function(input,output){
     data
     
     
-  }
+  })
     
-  data_2 <- reactive{ # this is referenced in the ggplot. 
+  data_2 <- reactive({ # this is referenced in the ggplot. 
     data2 <- combined_results %>% group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual_per_Year" = sum(Actual), "Mean_Energy_Predicted_per_Year" = sum(Predicted)) %>% 
