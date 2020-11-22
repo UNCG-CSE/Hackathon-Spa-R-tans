@@ -69,45 +69,23 @@ ui <- navbarPage("Spa-R-tans' Energy Consumption",
                                                          meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
                                              selectInput("time_choice_box_6", "Choose Time aggregation" , c("Day of the month","Week of the year","Month", "Hour of the Day"),
                                                          selected = "Month")),
-                                             box(plotOutput("BuildingComparedAverageplot"), width = "auto")
-                                         )),
-                 navbarMenu("Tables of Interest",
-                            tabPanel("Test of Time Selected Shown",
-                                     box(selectInput("input_meter_choice_box_7", "Choose a building to display", 
-                                                     meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
-                                         selectInput("time_choice_box_7", "Choose Time aggregation" , c("Day of the month","Week of the year","Month", "Hour of the Day"),
-                                                     selected = "Month")),
-                                     DT::dataTableOutput("Usertimedf")
-                                
-                            ))
+                                             box(plotOutput("BuildingComparedAverageplot"), width = "auto"))))
                  
-                 )
+                                
+                 
 
 server <- function(input,output){
-  #Creating Data Tables for Plots
-  #Creating Usertime in Dataframe
-  output$Usertimedf <- reactive({
-    Usertimedf <- combined_results %>%
-      filter(better_label == input$meter_choice_box_7) %>% #selecting user selected buildings
-      mutate(Usertime = case_when(input$time_choice_box_7 =="Annually"~ year(Datetime), 
-                                input$time_choice_box_7 =="Month"~ as.Date(Datetime, format = "%m%Y"),
-                                input$time_choice_box_7 =="Week of the year"~ isoweek(Datetime),
-                                input$time_choice_box_7 =="Day of the month"~ wday(Datetime),
-                                input$time_choice_box_7 =="Hour of the Day"~ hm(Datetime)))%>%
-      select(better_label,Actual, Predicted, Usertime)
-    Usertimedf
-  })
   
   #Reactive function to filter the dataset for the Actual Averages and Predicted Averages
   Actualdata_1 <- reactive({ # Reactive data table is referenced in the ggplot.
-    Actualdata <- Usertimedf %>% # data table
+    Actualdata <- combined_results %>% # data table
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_1) %>% #selecting user selected buildings
-      select("Actual","Datetime", "Predicted","Hour",input$time_choice_box_1,"better_label") %>% 
+      select("Actual","Predicted","Hour",input$time_choice_box_1,"better_label") %>% 
       gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
       group_by(better_label,Time_Label) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
-      filter(Datetime == "Time_Label")
       # summarizeing the mean for actual and predicted
+      filter(Time_Label == input$time_choice_box_1) %>% #selecting user selected buildings
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
                 "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" =  sum(Predicted))
     
