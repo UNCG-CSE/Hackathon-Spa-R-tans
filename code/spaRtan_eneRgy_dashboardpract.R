@@ -66,61 +66,58 @@ ui <- navbarPage("Spa-R-tans' Energy Consumption", #skin = "blue" , # find appro
     box(selectInput("plotType", "Choose type of calculations", c(Sum = "sum", Mean = "mean"), selected = "mean")),
     ),
   
-  #This panel only shows if the user selects mean on first tabl
-  conditionalPanel(
-    condition = "input.plotType == 'sum' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  #This panel only shows if the user selects sum on first tab
-  conditionalPanel(
-    condition = "input.plotType == 'mean' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  #This panel only shows if the user selects mean on second tab
-  conditionalPanel(
-    condition = "input.plotType == 'sum' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  #This panel only shows if the user selects sum on second tab
-  conditionalPanel(
-    condition = "input.plotType == 'mean' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  #This panel only shows if the user selects mean on third tab
-  conditionalPanel(
-    condition = "input.plotType == 'sum' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  #This panel only shows if the user selects sum on third
-  conditionalPanel(
-    condition = "input.plotType == 'mean' && input.tabName == '1.1'",
-    box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
-                                                                   "Week of the year","Month"), selected = "Month")),
-    box(plotOutput("meter_choice_plot3"), width = "auto"), 
-  ),
-  
   mainPanel(
     tabsetPanel(
+      #This panel only shows if the user selects mean on first tabl
+      conditionalPanel(
+        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto") 
+      ),
+      #This panel only shows if the user selects sum on first tab
+      conditionalPanel(
+        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto") 
+      ),
+      #This panel only shows if the user selects mean on second tab
+      conditionalPanel(
+        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto") 
+      ),
+      #This panel only shows if the user selects sum on second tab
+      conditionalPanel(
+        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto") 
+      ),
+      #This panel only shows if the user selects mean on third tab
+      conditionalPanel(
+        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto") 
+      ),
+      #This panel only shows if the user selects sum on third
+      conditionalPanel(
+        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
+                                                                       "Week of the year","Month"), selected = "Month")),
+        box(plotOutput("meter_choice_plot3"), width = "auto")), 
+        
       tabPanel(title = "About", value = 1, helpText("Brief Summary of Project")),
       
       tabPanel(title = "1.1 Static Plot", value = 2, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
                                                       Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
       tabPanel(title = "1.2 Static Plot", value = 2, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
                                                       Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
-      tabPanel(title = "2.0 Static Plot", value = 2, helpText("For everyplot in this section, user will be allowed to compare predicted values to acutal values"))
-      
-
-      )
+      tabPanel(title = "2.0 Static Plot", value = 2, helpText("For everyplot in this section, user will be allowed to compare predicted values to acutal values")), id = "tabselected"), 
+    
     )
   )
   
