@@ -14,9 +14,9 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
 #                                                 col_types = cols(X1 = col_skip()))
-#combined_results <- read_csv("combined_results.csv", 
+combined_results <- read_csv("combined_results.csv", 
                               col_types = cols(X1 = col_skip()))
 
 
@@ -148,7 +148,7 @@ server <- function(input,output){
       geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
       geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
       theme_minimal()+ # random theme
-      labs(title = paste("Energy for... find a way to paste name here"), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      labs(title = paste("Energy for", input$meter_choice_box), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab("Mean Energy")   # render labels
     
   })
@@ -159,7 +159,7 @@ server <- function(input,output){
       geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
       geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
       theme_minimal()+ # random theme
-      labs(title = paste("Energy for... find a way to paste name here"), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      labs(title = paste("Energy for", input$meter_choice_box), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab("Mean Energy")   # render labels
     
   })
