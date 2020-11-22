@@ -14,13 +14,13 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-#                                                 col_types = cols(X1 = col_skip()))
-combined_results <- read_csv("combined_results.csv", 
-                             col_types = cols(X1 = col_skip()))
+combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
+#combined_results <- read_csv("combined_results.csv", 
+#                             col_types = cols(X1 = col_skip()))
 
 
-combined_results<-combined_results %>% mutate("Hour" = hour(Datetime)) %>% select(-Datetime)
+combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
 glimpse(combined_results)
 
 #getwd()
@@ -51,8 +51,11 @@ week_year    <- unique(combined_results$`Week of the year`)
 # Day of the week (Sun - Sat)
 day_week     <- unique(combined_results$`Day of the week`)
 
+start_date<-min(combined_results$Datetime)
+end_date<-max(combined_results$Datetime)
 
 # Define UI
+
 
 # What does the dashboard look like?
 
@@ -81,14 +84,16 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   dashboardBody(
     tabItems(
       tabItem("task_1",
-              h1("This is where we can store task 1 stuff"),
-              box(selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
-                                                                                 "Week of the year","Month"),
-                              selected = "Month"),
-                  selectInput("meter_choice_box_1","Choose Building",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
+              h1("Static plot of energy consumption"),
+              box(selectInput("meter_choice_box_1","Choose Building",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
                   selectInput("agg_level", "Choose sum or mean energy",
                               c("Mean_Energy_Actual","Mean_Energy_Predicted",
-                                "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted")),
+                                "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted"),
+                  wellPanel(
+                  dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
+                  selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
+                                                                                 "Week of the year","Month"),
+                              selected = "Month"),),
               box(plotOutput("task_1.1_plot"),width = "auto")
               
               
@@ -131,7 +136,8 @@ server <- function(input,output){
   
   # Reeactive function to filter the dataset
   data_1 <- reactive({ # this is referenced in the ggplot. 
-    data <- combined_results %>% filter(better_label == input$meter_choice_box_3) %>% 
+    data <- combined_results %>% filter(better_label == input$meter_choice_box_3,
+                                        Datetime >= input$daterange_1[1] & Datetime <= input$daterange_1[2]) %>% 
       select("Actual","Predicted","Hour",input$time_choice_box_3,"better_label") %>% 
       gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
       group_by(better_label,Time_Label) %>%   # grouping by year, so this will be a year plot, could ask them for input
@@ -171,20 +177,24 @@ server <- function(input,output){
   
   
   output$task_1.1_plot <- renderPlot({
-    ggplot(data_1.1(),aes(x = Time_Label)) + # ggplot, year on x axis
-      geom_line(aes_string(y = input$agg_level),show.legend = F)+
+    ggplot(data_1.1(),aes(x = Time_Label, color = better_label)) + # ggplot, year on x axis
+      geom_line(aes_string(y = input$agg_level),show.legend = T)+
       theme_minimal()+ # random theme
-      labs(title = paste("Energy for", input$meter_choice_box_1), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
-      ylab("Mean Energy")
+      labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_1),
+           caption = "Red line is Actual, Green is predicted",color = "Building/Meter")+
+      ylab(if_else(input$agg_level == "Mean_Energy_Actual","Mean Energy Used",
+                   if_else(input$agg_level == "Mean_Energy_Predicted","Mean Energy Predicted",
+                           if_else(input$agg_level == "Total_Energy_Actual","Total Energy Used",
+                                   if_else(input$agg_level == "Total_Energy_Predicted","Total Energy Predicted","Nothing")))))
   })
   
   # this plot will go the the "task_1" page :)
   
   output$meter_choice_plot_3 <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
     
-    ggplot(data_1(),aes(x = Time_Label)) + # ggplot, year on x axis
-      geom_line(aes(y = `Mean_Energy_Actual`, color = "darkred"),show.legend = F)+ # actual both on y axis
-      geom_line(aes(y = `Mean_Energy_Predicted`, color = "green"),show.legend = F)+ # predict
+    ggplot(data_1(),aes(x = Time_Label, color = better_label)) + # ggplot, year on x axis
+      geom_line(aes(y = `Mean_Energy_Actual`),show.legend = T)+ # actual both on y axis
+      geom_line(aes(y = `Mean_Energy_Predicted`), linetype = "dashed",show.legend = T)+ # predict
       theme_minimal()+ # random theme
       labs(title = paste("Energy for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab("Mean Energy")   # render labels
