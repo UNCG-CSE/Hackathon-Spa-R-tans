@@ -85,6 +85,9 @@ Next is to build out the rest now that we have essential pieces. Also adding Qua
 
 
 # Day 6
+Updated a layout scheme using navbarPage, but need to add headings. Created corresponding tables and plots for each of the user possibilities. Hour is working, but would like to address label titles and axes. Include more graphs, but need to double check filtering on tables or just create new tables, but figure out how do I filter for only Times that match Time_Label. I did try filter(Time_Label == input$time_choice_box_1), but unsure if that works well? Addressed the titles of axes, but not the labels of tick marks. Retried the Usertime function would be nice to use for display of tickmarcks.
+
+# Filters for graphs
 ---
 
 # Day 7 (Final Day)
