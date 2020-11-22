@@ -33,8 +33,6 @@ for( i in unique(combined_results$better_label)){
   meter_choices = c(meter_choices,i)
 }
 
-
-
 str(meter_choices)
 # Declare Time options
 
@@ -57,66 +55,72 @@ day_week     <- unique(combined_results$`Day of the week`)
 
 # What does the dashboard look like?
 
-ui <- navbarPage("Spa-R-tans' Energy Consumption", #skin = "blue" , # find appropriate uncg color?
+ui <- pageWithSidebar("Spa-R-tans' Energy Consumption", #skin = "blue" , # find appropriate uncg color?
   
   ### HEADER ------------
-  
+  headerPanel("Spa-R-tans' Energy Consumption"),
   sidebarPanel(
     #User selects buildings to display
     box(selectInput("plotType", "Choose type of calculations", c(Sum = "sum", Mean = "mean"), selected = "mean")),
+    
+    
     ),
   
   mainPanel(
     tabsetPanel(
+      
+      tabPanel("1.1 Static Plot", value=1, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
+                                                      Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
+      tabPanel("1.2 Static Plot", value=2, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
+                                                      Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
+      tabPanel("2.0 Static Plot", value=3, helpText("For everyplot in this section, user will be allowed to compare predicted values to acutal values")), 
+      
       #This panel only shows if the user selects mean on first tabl
       conditionalPanel(
-        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        condition = "input.plotType == 'sum' && input.tabselected == 1",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
         box(plotOutput("meter_choice_plot3"), width = "auto") 
       ),
       #This panel only shows if the user selects sum on first tab
       conditionalPanel(
-        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        condition = "input.plotType == 'mean' && input.tabselected == 1'",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
         box(plotOutput("meter_choice_plot3"), width = "auto") 
       ),
       #This panel only shows if the user selects mean on second tab
       conditionalPanel(
-        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        condition = "input.plotType == 'sum' && input.tabselected == 2",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
         box(plotOutput("meter_choice_plot3"), width = "auto") 
       ),
       #This panel only shows if the user selects sum on second tab
       conditionalPanel(
-        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        condition = "input.plotType == 'mean' && input.tabselected == 2",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
-        box(plotOutput("meter_choice_plot3"), width = "auto") 
+        box(plotOutput("meter_choice_plot3")) 
       ),
       #This panel only shows if the user selects mean on third tab
       conditionalPanel(
-        condition = "input.plotType == 'sum' && input.tabName == '1.1'",
+        condition = "input.plotType == 'sum' && input.tabselected == 3",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
-        box(plotOutput("meter_choice_plot3"), width = "auto") 
+        box(plotOutput("meter_choice_plot3")) 
       ),
       #This panel only shows if the user selects sum on third
       conditionalPanel(
-        condition = "input.plotType == 'mean' && input.tabName == '1.1'",
+        condition = "input.plotType == 'mean' && input.tabselected == 3",
         box(selectInput("time_choice_box","Choose time aggregation", c("Hour of the day","Day of the week",
                                                                        "Week of the year","Month"), selected = "Month")),
-        box(plotOutput("meter_choice_plot3"), width = "auto")), 
-        
-      tabPanel(title = "About", value = 1, helpText("Brief Summary of Project")),
+        box(plotOutput("meter_choice_plot3"))
+      ),
       
-      tabPanel(title = "1.1 Static Plot", value = 2, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
-                                                      Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
-      tabPanel(title = "1.2 Static Plot", value = 2, helpText("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
-                                                      Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption")),
-      tabPanel(title = "2.0 Static Plot", value = 2, helpText("For everyplot in this section, user will be allowed to compare predicted values to acutal values")), id = "tabselected"), 
+      id = "tabselected",
+      tabsetPanel()
+      ) 
     
     )
   )
@@ -124,8 +128,6 @@ ui <- navbarPage("Spa-R-tans' Energy Consumption", #skin = "blue" , # find appro
 
 
 server <- function(input,output){
-  
-  
   # Reeactive function to filter the dataset
   data_1 <- reactive({ # this is referenced in the ggplot. 
     data <- combined_results %>% 
@@ -136,8 +138,7 @@ server <- function(input,output){
       group_by(better_label,Time_Label) %>%   # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual_per_Year" = mean(Actual), "Mean_Energy_Predicted_per_Year" = mean(Predicted))
-    
-    
+
     data
     
     
@@ -152,8 +153,7 @@ server <- function(input,output){
       gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
       group_by(better_label,Time_Label) %>%   # grouping by year, so this will be a year plot, could ask them for input
       summarize("Sum_Energy_Actual_per_Year" = sum(Actual), "Sum_Energy_Predicted_per_Year" = sum(Predicted)) %>% 
-      
-    
+
     data2
   })
   
@@ -192,14 +192,6 @@ server <- function(input,output){
     
   })
 }
-  
-  # output$thing <- renderDataTable({
-  #   data_2 <- data_1() 
-  #   
-  #   data_2
-  # })
-  # 
-
 
 shinyApp(ui = ui, server = server)
 
