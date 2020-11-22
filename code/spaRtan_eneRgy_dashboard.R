@@ -34,7 +34,6 @@ for( i in unique(combined_results$better_label)){
 }
 
 
-
 str(meter_choices)
 # Declare Time options
 
@@ -111,7 +110,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
               
               box(selectInput("time_choice_box_3","Choose time aggregation", c("Day of the month",
                                                                                "Week of the year","Month"), selected = "Month")),
-              box(selectInput("meter_choice_box_3","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
+              box(selectInput("meter_choice_box_3","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               
               box(plotOutput("meter_choice_plot_3"), width = "auto") 
               
