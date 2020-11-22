@@ -120,7 +120,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
       tabItem("Data_Table", # leaving this page empty for now
               
               h1("this is an empty page"),
-              box(selectInput("meter_choice_box_4","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", , multiple = T)),
+              box(selectInput("meter_choice_box_4","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               DT::dataTableOutput("thing")
               
       )
