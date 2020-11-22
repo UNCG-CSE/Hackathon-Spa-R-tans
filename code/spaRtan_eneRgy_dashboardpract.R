@@ -71,11 +71,11 @@ for (i in time_unit){
 }
 str(time_unit)
 
-explainprompt1 = c("Since 2015", "up to 12 months", "up to 12 weeks", "up to 31 days")
-for (i in explainprompt1){
-  explainprompt1 = c(explainprompt1, i)
-}
-str(explainprompt1)
+# explainprompt1 = c("Since 2015", "up to 12 months", "up to 12 weeks", "up to 31 days")
+# for (i in explainprompt1){
+#   explainprompt1 = c(explainprompt1, i)
+# }
+# str(explainprompt1)
 
 # Define UI
 
@@ -107,7 +107,6 @@ ui <- dashboardPage( # find appropriate uncg color?
                     dashboardBody(
                       tabItems(
                         tabItem("task_1",# this links back to the sidebar item :) 
-                                fluidPage(
                                   h1("Insert text here, this is a heading one"), ## adding simple text...
                                   h3("heading 3... try h4, h2 etc..."),
                                   h3("now let's try to plot something"),
@@ -115,27 +114,38 @@ ui <- dashboardPage( # find appropriate uncg color?
                                   # First arg is what renderplot will use, second is what shows on the dashbooard
                                   # third are the designated choices
                                   box(selectInput("meter_choicebox","Choose meter to display", meter_choices, selected = "Elliott University Center (040) - Main Meter")),
-                                  box(selectInput("time_choicebox","How would you like to display your data?",time_unit)),
-                                  box(helpText("explainprompt1", "Note", explainprompt1)),
-                                  box(plotOutput("AnnualAverageBuildingEnergyConsumptionPlot"), width = "400"),
+                                  box(selectInput("time_choicebox","How would you like to display your data?",time_unit, selected = "Annually")),
+                                  box(plotOutput("AnnualAverageBuildingEnergyConsumptionPlot"), width = "auto"),
                                   box(plotOutput("AnnualTotalBuildingEnergyConsumptionPlot"), width = "400")
-                                  
                                   )
                                 ),
+                        # tabItem("task_1b",# this links back to the sidebar item :) 
+                        #           h1("Insert text here, this is a heading one"), ## adding simple text...
+                        #           h3("heading 3... try h4, h2 etc..."),
+                        #           h3("now let's try to plot something"),
+                        #           # Creating a visual box for user input
+                        #           # First arg is what renderplot will use, second is what shows on the dashbooard
+                        #           # third are the designated choices
+                        #           box(selectInput("meter_choicebox","Choose meter to display", meter_choices, selected = "Elliott University Center (040) - Main Meter")),
+                        #           box(selectInput("time_choicebox","How would you like to display your data?",time_unit)),
+                        #           box(helpText("explainprompt1", "Note", explainprompt1)),
+                        #           #box(plotOutput("PredictedAnnualAverageBuildingEnergyConsumptionPlot"), width = "400"),
+                        #           #box(plotOutput("PredictedAnnualTotalBuildingEnergyConsumptionPlot"), width = "400")
+                        #           
+                        #         
+                        # ),
                         
                       
                       tabItem("task_2", # leaving this page empty for now
-                              fluidPage(
                                 h1("this is an empty page"),
                                 box(selectInput("meter_choicebox","Choose meter to display", meter_choices, selected = "Elliott University Center (040) - Main Meter")),
-                                box(selectInput("time_choicebox","How would you like to display your data?",time_unit)),
-                                box(selectInput("explainprompt1", "Note", explainprompt1)),
+                                box(selectInput("time_choicebox","How would you like to display your data?", time_unit, selected = "Annually")),
                                 box(plotOutput("AnnualAverageBuildingEnergyConsumptionPlot"), width = "400"),
                                 box(plotOutput("AnnualTotalBuildingEnergyConsumptionPlot"), width = "400")
                                 
                               )
                       )
-                      )))
+                    )
                       
 
 server <- function(input, output, session){
@@ -161,47 +171,51 @@ server <- function(input, output, session){
     TotalAnnualBuildingResults <- combined_results %>% 
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
       filter(better_label == input$meter_choice_box) %>% 
-      select(Datetime, Actual, Predicted, Label) %>% 
-      group_by(better_label,Datetime) %>%  # grouping by Datetime, so this will be a user-input-based plot, could ask them for input
+      mutate("Usertime" = case_when(input$time_choicebox =="Annually"~ year(Datetime), 
+                                  input$time_choicebox =="Monthly"~ as.Date(Datetime, format = "%m%Y"),
+                                  input$time_choicebox =="Weekly"~ isoweek(Datetime),
+                                  input$time_choicebox =="Daily"~ wday(Datetime),
+                                  input$time_choicebox =="Hourly"~ hm(Datetime))) %>% 
+      select("better_label", "Usertime", "Actual", "Predicted") %>% 
+      group_by(better_label, Usertime) %>%  # grouping by Datetime, so this will be a user-input-based plot, could ask them for input
       # summarizeing the mean for actual and predicted
-      mutate(Usertime = case_when(input$time_unit =="Annually"~ year(Datetime), 
-                                  input$time_unit =="Monthly"~ as.Date(Datetime, format = "%m%Y"),
-                                  input$time_unit =="Weekly"~ isoweek(Datetime),
-                                  input$time_unit =="Daily"~ wday(Datetime),
-                                  input$time_unit =="Hourly"~ hm(Datetime))) %>% 
       summarize("Mean_Energy_Actual_per_Year" = mean(Actual), "Mean_Energy_Predicted_per_Year" = mean(Predicted))
+    TotalAnnualBuildingResults
   })
   #This second reactive table calulates the averages of the energy consumed in buildings selected by user over time period selected by user
-    ReactiveAnnualTotalTable <- reactive({ # this is referenced in the ggplot. 
-      AnnualAverageBuildingResults <- combined_results %>% 
-        # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
-        filter(better_label == input$meter_choice_box) %>% 
-        select(Datetime, Actual, Predicted, Label) %>% 
-        group_by(better_label, Datetime)  # grouping by Datetime, so this will be a user-input-based plot, could ask them for input) %>%  # grouping by year, so this will be a year plot, could ask them for input
-        mutate(Usertime = case_when(input$time_unit =="Annually"~ year(Datetime), 
-                                    input$time_unit =="Monthly"~ as.Date(Datetime, format = "%m%Y"),
-                                    input$time_unit =="Weekly"~ isoweek(Datetime),
-                                    input$time_unit =="Daily"~ wday(Datetime),
-                                    input$time_unit =="Hourly"~ hm(Datetime))) %>% 
-        # summarizeing the mean for actual and predicted
-        summarize("Mean_Energy_Actual_per_Year" = sum(Actual), "Mean_Energy_Predicted_per_Year" = sum(Predicted))
+  ReactiveAnnualTotalTable <- reactive({ # this is referenced in the ggplot. 
+    AnnualAverageBuildingResults <- combined_results %>% 
+      # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
+      filter(better_label == input$meter_choice_box) %>% 
+      mutate("Usertime" = case_when(input$time_choicebox =="Annually"~ year(Datetime), 
+                                    input$time_choicebox =="Monthly"~ as.Date(Datetime, format = "%m%Y"),
+                                    input$time_choicebox =="Weekly"~ isoweek(Datetime),
+                                    input$time_choicebox =="Daily"~ wday(Datetime),
+                                    input$time_choicebox =="Hourly"~ hm(Datetime))) %>% 
+      select("better_label", "Usertime", "Actual", "Predicted") %>% 
+      group_by(better_label, Usertime)  # grouping by Datetime, so this will be a user-input-based plot, could ask them for input) %>%  # grouping by year, so this will be a year plot, could ask them for input
+      # summarizeing the mean for actual and predicted
+      summarize("Mean_Energy_Actual_per_Year" = sum(Actual), "Mean_Energy_Predicted_per_Year" = sum(Predicted))
+      AnnualAverageBuildingResults
     })
     
  
   # this Average plot will go the the "task_1" page :)
   output$AnnualAverageBuildingEnergyConsumptionPlot <- renderPlot({
-    ggplot(ReactiveAnnualAverageTable, aes(x = Usertime)+
-      geom_col(y = ActualBuildingTotal, fill = input$meter_choices), position = position_dodge())+
+    ggplot(ReactiveAnnualAverageTable(), aes(x = Usertime))+
+      geom_line(aes(y = ActualBuildingTotal, color = better_label), position = position_dodge())+
       theme(legend.position = 'none')+
       scale_y_continuous(labels = scales::comma_format(scale = 1/1000))
     })
+  
   # this sum plot will go the the "task_1" page :)
   output$AnnualTotalBuildingEnergyConsumptionPlot <- renderPlot({
-    ggplot(ReactiveAnnualTotalTable, aes(x = Usertime)+
-      geom_col(y = ActualBuildingTotal, fill = input$meter_choices), position = position_dodge())+
+    ggplot(ReactiveAnnualTotalTable(), aes(x = Usertime))+
+      geom_line(aes(y = ActualBuildingTotal, color = better_label), position = position_dodge())+
       theme(legend.position = 'none')+
       scale_y_continuous(labels = scales::comma_format(scale = 1/1000))
-  })
+    })
+  
   }
   
 # output$thing1 <- renderDataTable({
