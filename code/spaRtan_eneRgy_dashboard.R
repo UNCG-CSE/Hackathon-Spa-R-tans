@@ -87,7 +87,8 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                           h3("1.1 Static Plot"),
                           h4("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
                              Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption"),
-                         
+                          box(plotOutput("meter_choice_plot2"), width = "auto"), 
+                          
                           h3("1.2 Predictive plot"),
                           h4("For everyplot above, allow user to plot predicted values"),
                           
@@ -153,11 +154,11 @@ server <- function(input,output){
     
   })
   
+  #Average Annual Plot
   output$meter_choice_plot2 <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
     
     ggplot(data_2(),aes(x = Year)) + # ggplot, year on x axis
       geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
-      geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
       theme_minimal()+ # random theme
       labs(title = paste("Energy for", input$meter_choice_box), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab("Mean Energy")   # render labels
