@@ -92,45 +92,40 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                                 "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted"),
                   wellPanel(
                   dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
-                  selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
-                                                                                 "Week of the year","Month"),
-                              selected = "Month")),
-              box(plotOutput("task_1.1_plot"),width = "auto"))
-              
-              
-              
-      ),
-      tabItem("task_2",# this links back to the sidebar item :) 
-              
-              h1("Create a real-time interactive plot of energy consumption and prediction"), ## adding simple text...
-              h3("1.1 Static Plot"),
-              h4("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
-                             Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption"),
-              
-              h3("1.2 Predictive plot"),
-              h4("For everyplot above, allow user to plot predicted values"),
-              
-              # Creating a visual box for user input
-              # First arg is what renderplot will use, second is what shows on the dashbooard
-              # third are the designated choices
-              
-              box(selectInput("time_choice_box_3","Choose time aggregation", c("Day of the month",
-                                                                               "Week of the year","Month"), selected = "Month")),
-              box(selectInput("meter_choice_box_3","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
-              
-              box(plotOutput("meter_choice_plot_3"), width = "auto") 
-              
-      ),
+                  selectInput("time_choice_box_1", "Choose Time aggredation" , c("year",
+                                                                                 "month"),
+                              selected = "month")),
+              box(plotOutput("task_1.1_plot"),width = "auto")),
       
-      tabItem("Data_Table", # leaving this page empty for now
-              
-              h1("this is an empty page"),
-              box(selectInput("meter_choice_box_4","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
-              DT::dataTableOutput("thing")
-              
-      )
+    tabItem("task_2",# this links back to the sidebar item :) 
+            
+            h1("Create a real-time interactive plot of energy consumption and prediction"), ## adding simple text...
+            h3("1.1 Static Plot"),
+            h4("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
+                             Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption"),
+            
+            h3("1.2 Predictive plot"),
+            h4("For everyplot above, allow user to plot predicted values"),
+            
+            # Creating a visual box for user input
+            # First arg is what renderplot will use, second is what shows on the dashbooard
+            # third are the designated choices
+            
+            box(selectInput("time_choice_box_3","Choose time aggregation", c("Day of the month",
+                                                                             "Week of the year","Month"), selected = "Month")),
+            box(selectInput("meter_choice_box_3","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
+            
+            box(plotOutput("meter_choice_plot_3"), width = "auto")),
+    
+    tabItem("Data_Table", # leaving this page empty for now
+            
+            h1("this is an empty page"),
+            box(selectInput("meter_choice_box_4","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
+            DT::dataTableOutput("thing")
+            
     )
   )
+))
 
 server <- function(input,output){
   
@@ -153,9 +148,10 @@ server <- function(input,output){
   })
   data_1.1 <- reactive({ # this is referenced in the ggplot. 
     data <- combined_results %>% filter(better_label == input$meter_choice_box_1) %>% 
-      select("Actual","Predicted","Hour",input$time_choice_box_1,"better_label") %>% 
-      gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
-      group_by(better_label,Time_Label) %>%   # grouping by year, so this will be a year plot, could ask them for input
+      select("Actual","Predicted","Hour","Datetime","better_label") %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_1 == "year" ~ year(Datetime),
+                                       input$time_choice_box_1 == "month" ~ month(Datetime, label = T))) %>% 
+      group_by(better_label,Time_Choice) %>%   # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
                 "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" =  sum(Predicted))
@@ -178,7 +174,7 @@ server <- function(input,output){
   
   
   output$task_1.1_plot <- renderPlot({
-    ggplot(data_1.1(),aes(x = Time_Label, color = better_label)) + # ggplot, year on x axis
+    ggplot(data_1.1(),aes(x = Time_Choice, color = better_label)) + # ggplot, year on x axis
       geom_line(aes_string(y = input$agg_level),show.legend = T)+
       theme_minimal()+ # random theme
       labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_1),
@@ -211,22 +207,3 @@ server <- function(input,output){
 }
 
 shinyApp(ui = ui, server = server)
-  
-  # TASK 2 PLOT THINGS
-  #   output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
-  #      
-  #     ggplot(data_1(),aes(x = Time_Label)) + # ggplot, year on x axis
-  #     geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
-  #     geom_line(aes(y = Mean_Energy_Predicted_per_Year,color = "green"),show.legend = F)+ # predict
-  #     theme_minimal()+ # random theme
-  #     labs(title = paste("Energy for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
-  #     ylab("Mean Energy")   # render labels
-  #   
-  # })
-  
-  
-  
-  
-
-
-
