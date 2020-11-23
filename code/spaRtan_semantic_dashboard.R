@@ -1,5 +1,5 @@
 if (!require(pacman)) install.packages("pacman") 
-pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
+pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT,dashboardthemes)
 
 #detach("package:shiny.semantic",unload = T)
 #detach("package:semantic.dashboard", unload = T)
@@ -14,11 +14,11 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-#                                                 col_types = cols(X1 = col_skip()))
+combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
 
-combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
-                             col_types = cols(X1 = col_skip()))
+#combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
+#                             col_types = cols(X1 = col_skip()))
 
 
 combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
@@ -69,6 +69,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   ### SIDE BAR -----------
   
   dashboardSidebar( # declare a sidebar... hey R, theres a side bar!
+    width = 350,
     sidebarMenu( # now what does the sidebar contain? let's fill it with menu items
       
       # First arg is what is seen on the dashboard, Second indicates to output where to show output
@@ -150,7 +151,7 @@ server <- function(input,output){
     data <- combined_results %>% filter(better_label == input$meter_choice_box_1) %>% 
       select("Actual","Predicted","Hour","Datetime","better_label") %>% 
       mutate("Time_Choice" = case_when(input$time_choice_box_1 == "year" ~ year(Datetime),
-                                       input$time_choice_box_1 == "month" ~ month(Datetime, label = T))) %>% 
+                                       input$time_choice_box_1 == "month" ~ month(Datetime))) %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),

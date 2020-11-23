@@ -15,11 +15,11 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 # reading in the data
 
 
-#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-                                                 #col_types = cols(X1 = col_skip()))
+combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+                                                 col_types = cols(X1 = col_skip()))
 
-combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
-                             col_types = cols(X1 = col_skip()))
+#combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
+                            # col_types = cols(X1 = col_skip()))
 
 #combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
  #                                                col_types = cols(X1 = col_skip()))
@@ -102,16 +102,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                                                                                  "Week of the year","Month"),
 
                               selected = "Month"),
-
-                  conditionalPanel(
-                    wellPanel(
-                      dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
-                    plotOutput("DateRangeplot"))
-                  ),
-              box(plotOutput("task_1.1_plot"),width = "auto"),
-
-                              selected = "Month")),
-              box(plotOutput("task_1.1_plot"),width = "auto")),
+              box(plotOutput("task_1.1_plot"),width = "auto", selected = "Month"))),
 
               
               
@@ -133,26 +124,24 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                                                                                "Week of the year","Month"), selected = "Month")),
               box(selectInput("meter_choice_box_3","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               
-              box(plotOutput("meter_choice_plot_3"), width = "auto") 
-              
-      ),
+              box(plotOutput("meter_choice_plot_3"), width = "auto")),
       
       tabItem("Data_Table", # leaving this page empty for now
               
               h1("this is an empty page"),
               box(selectInput("meter_choice_box_4","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
-              DT::dataTableOutput("thing")
+              DT::dataTableOutput("thing"))
               
       )
     )
+  )
 
 server <- function(input,output){
   
   
   # Reeactive function to filter the dataset
   data_1 <- reactive({ # this is referenced in the ggplot. 
-    data <- combined_results %>% filter(better_label == input$meter_choice_box_3,
-                                        Datetime >= input$daterange_1[1] & Datetime <= input$daterange_1[2]) %>% 
+    data <- combined_results %>% filter(better_label == input$meter_choice_box_3) %>% 
       select("Actual","Predicted","Hour",input$time_choice_box_3,"better_label") %>% 
       gather(key = "Time_Choice","Time_Label",-c("Actual","Predicted","Hour","better_label")) %>% 
       group_by(better_label,Time_Label) %>%   # grouping by year, so this will be a year plot, could ask them for input
@@ -221,17 +210,7 @@ server <- function(input,output){
     
     data_2
   })
-  
-  output$DateRangeplot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
-    
-    ggplot(data_1(),aes(x = input$daterange_1, color = better_label)) + # ggplot, year on x axis
-      geom_line(aes(y = `Mean_Energy_Actual`),show.legend = T)+ # actual both on y axis
-      geom_line(aes(y = `Mean_Energy_Predicted`), linetype = "dashed",show.legend = T)+ # predict
-      theme_minimal()+ # random theme
-      labs(title = paste("Energy for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
-      ylab("Mean Energy")   # render labels
-    
-  })
+
 }
 
 shinyApp(ui = ui, server = server)
