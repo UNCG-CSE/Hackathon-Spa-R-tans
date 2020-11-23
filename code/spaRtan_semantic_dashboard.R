@@ -14,11 +14,11 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT,dashboardthemes)
 
 # reading in the data
 
-combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-                                                 col_types = cols(X1 = col_skip()))
+#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+ #                                                col_types = cols(X1 = col_skip()))
 
-#combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
-#                             col_types = cols(X1 = col_skip()))
+combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
+                             col_types = cols(X1 = col_skip()))
 
 
 combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
@@ -84,6 +84,10 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   ### Body/Content ----------
   
   dashboardBody(
+    #Include the cusom styling
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")
+    ),
     tabItems(
       tabItem("task_1",
               h1("Static plot of energy consumption"),
