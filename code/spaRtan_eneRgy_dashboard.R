@@ -14,19 +14,19 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-<<<<<<< HEAD
+
 #combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
                                                  #col_types = cols(X1 = col_skip()))
 
 combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
                              col_types = cols(X1 = col_skip()))
-=======
+
 combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
                                                  col_types = cols(X1 = col_skip()))
 
 #combined_results <- read_csv("combined_results.csv", 
 #                             col_types = cols(X1 = col_skip()))
->>>>>>> 3025dd9e6b391f42607f411b6f217989ea1881ca
+
 
 
 combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
@@ -69,8 +69,6 @@ end_date<-max(combined_results$Datetime)
 # What does the dashboard look like?
 
 ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")),
   
   ### HEADER ------------
   
@@ -93,6 +91,9 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   ### Body/Content ----------
   
   dashboardBody(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")),
+    
     tabItems(
       tabItem("task_1",
               h1("Static plot of energy consumption"),
@@ -104,17 +105,17 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                                                                                  "Week of the year","Month"),
 
                               selected = "Month"),
-<<<<<<< HEAD
+
                   conditionalPanel(
                     wellPanel(
                       dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
                     plotOutput("DateRangeplot"))
                   ),
               box(plotOutput("task_1.1_plot"),width = "auto")),
-=======
+
                               selected = "Month")),
               box(plotOutput("task_1.1_plot"),width = "auto"))
->>>>>>> 3025dd9e6b391f42607f411b6f217989ea1881ca
+
               
               
       tabItem("task_2",# this links back to the sidebar item :) 
