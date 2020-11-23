@@ -21,8 +21,8 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
                              col_types = cols(X1 = col_skip()))
 
-combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-                                                 col_types = cols(X1 = col_skip()))
+#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+ #                                                col_types = cols(X1 = col_skip()))
 
 #combined_results <- read_csv("combined_results.csv", 
 #                             col_types = cols(X1 = col_skip()))
@@ -91,9 +91,6 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   ### Body/Content ----------
   
   dashboardBody(
-    tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")),
-    
     tabItems(
       tabItem("task_1",
               h1("Static plot of energy consumption"),
@@ -111,10 +108,10 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                       dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
                     plotOutput("DateRangeplot"))
                   ),
-              box(plotOutput("task_1.1_plot"),width = "auto")),
+              box(plotOutput("task_1.1_plot"),width = "auto"),
 
                               selected = "Month")),
-              box(plotOutput("task_1.1_plot"),width = "auto"))
+              box(plotOutput("task_1.1_plot"),width = "auto")),
 
               
               
@@ -148,7 +145,6 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
               
       )
     )
-  ))
 
 server <- function(input,output){
   
@@ -241,7 +237,7 @@ server <- function(input,output){
 shinyApp(ui = ui, server = server)
   
   # TASK 2 PLOT THINGS
-  #   output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+  #   output$meter_choice_plot <- renderPlotly({ # render a plot, the meter_choice_plot, which is found in task_1 tab
   #      
   #     ggplot(data_1(),aes(x = Time_Label)) + # ggplot, year on x axis
   #     geom_line(aes(y = Mean_Energy_Actual_per_Year, color = "darkred"),show.legend = F)+ # actual both on y axis
