@@ -98,12 +98,16 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                   selectInput("agg_level", "Choose sum or mean energy",
                               c("Mean_Energy_Actual","Mean_Energy_Predicted",
                                 "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted"),
-                  wellPanel(
-                  dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
                   selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
                                                                                  "Week of the year","Month"),
+
+                              selected = "Month"),
 <<<<<<< HEAD
-                              selected = "Month"),),
+                  conditionalPanel(
+                    wellPanel(
+                      dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
+                    plotOutput("DateRangeplot"))
+                  ),
               box(plotOutput("task_1.1_plot"),width = "auto")),
 =======
                               selected = "Month")),
@@ -219,6 +223,16 @@ server <- function(input,output){
     data_2
   })
   
+  output$DateRangeplot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+    
+    ggplot(data_1(),aes(x = input$daterange_1, color = better_label)) + # ggplot, year on x axis
+      geom_line(aes(y = `Mean_Energy_Actual`),show.legend = T)+ # actual both on y axis
+      geom_line(aes(y = `Mean_Energy_Predicted`), linetype = "dashed",show.legend = T)+ # predict
+      theme_minimal()+ # random theme
+      labs(title = paste("Energy for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      ylab("Mean Energy")   # render labels
+    
+  })
 }
 
 shinyApp(ui = ui, server = server)
