@@ -15,9 +15,9 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 # reading in the data
 
 #combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
-                                                 col_types = cols(X1 = col_skip()))
+                                                 #col_types = cols(X1 = col_skip()))
 
-combined_results <- read_csv("combined_results.csv", 
+combined_results <- read_csv("D:/Hackathon/Hackathon/combined_results.csv", 
                              col_types = cols(X1 = col_skip()))
 
 
@@ -95,11 +95,9 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                   selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
                                                                                  "Week of the year","Month"),
                               selected = "Month"),),
-              box(plotOutput("task_1.1_plot"),width = "auto"))
+              box(plotOutput("task_1.1_plot"),width = "auto")),
               
               
-              
-      ),
       tabItem("task_2",# this links back to the sidebar item :) 
               
               h1("Create a real-time interactive plot of energy consumption and prediction"), ## adding simple text...
@@ -130,7 +128,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
               
       )
     )
-  )
+  ))
 
 server <- function(input,output){
   
