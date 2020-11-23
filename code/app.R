@@ -81,19 +81,19 @@ ui <- navbarPage("Spa-R-tans' Energy Consumption",
 
 server <- function(input,output){
   
-  #####################################DATA TABLES################################################################
+#####################################DATA TABLES################################################################
   #Reactive function to filter the dataset for the Actual Averages and Predicted Averages
   Actualdata_1 <- reactive({ # Reactive data table is referenced in the ggplot.
     Actualdata <- combined_results %>% # data table
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_1) %>% #selecting user selected buildings
-      select("Actual","Predicted","better_label", "Datetime") %>% 
-      mutate("Time_Choice" = case_when(input$time_choice_box_1 =="year"~ format(year(Datetime), format = "%Y"),
-                                       input$time_choice_box_1 =="month"~ format(strftime(Datetime, "%b"), format = "%b"),
-                                       input$time_choice_box_1 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_1 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_1 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_1 =="year"~ as.character(year(Datetime)),
+                                       input$time_choice_box_1 =="month"~ as.character(strftime(Datetime, "%b")),
+                                       input$time_choice_box_1 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_1 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_1 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
+      select("Actual","Predicted","better_label", "Time_Choice") %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -106,12 +106,12 @@ server <- function(input,output){
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_2) %>% #selecting user selected buildings
       select("Actual","Predicted","better_label", "Datetime") %>% 
-      mutate("Time_Choice" = case_when(input$time_choice_box_2 =="year"~ format(year(Datetime), format = "%Y"), 
-                                       input$time_choice_box_2 =="month"~ format(strftime(Datetime, "%b"), format = "%b"), 
-                                       input$time_choice_box_2 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_2 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_2 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_2 =="year"~ as.character(year(Datetime)), 
+                                       input$time_choice_box_2 =="month"~ as.character(strftime(Datetime, "%b")), 
+                                       input$time_choice_box_2 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_2 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_2 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -126,12 +126,12 @@ server <- function(input,output){
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_3) %>% #selecting user selected buildings
       select("Actual","Predicted","better_label", "Datetime") %>% 
-      mutate("Time_Choice" = case_when(input$time_choice_box_3 =="year"~ format(year(Datetime), format = "%Y"), 
-                                       input$time_choice_box_3 =="month"~ format(strftime(Datetime, "%b"), format = "%b"), 
-                                       input$time_choice_box_3 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_3 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_3 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_3 =="year"~ as.character(year(Datetime)), 
+                                       input$time_choice_box_3 =="month"~ as.character(strftime(Datetime, "%b")), 
+                                       input$time_choice_box_3 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_3 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_3 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -145,12 +145,12 @@ server <- function(input,output){
       select("Actual","Predicted","better_label", "Datetime") %>% 
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_4) %>% #selecting user selected buildings
-      mutate("Time_Choice" = case_when(input$time_choice_box_4 =="year"~ format(year(Datetime), format = "%Y"), 
-                                       input$time_choice_box_4 =="month"~ format(strftime(Datetime, "%b"), format = "%b"), 
-                                       input$time_choice_box_4 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_4 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_4 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_4 =="year"~ as.character(year(Datetime)), 
+                                       input$time_choice_box_4 =="month"~ as.character(strftime(Datetime, "%b")), 
+                                       input$time_choice_box_4 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_4 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_4 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -164,12 +164,12 @@ server <- function(input,output){
       select("Actual","Predicted","better_label", "Datetime") %>% 
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_5) %>% #selecting user selected buildings
-      mutate("Time_Choice" = case_when(input$time_choice_box_5 =="year"~ format(year(Datetime), format = "%Y"), 
-                                       input$time_choice_box_5 =="month"~ format(strftime(Datetime, "%b"), format = "%b"),
-                                       input$time_choice_box_5 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_5 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_5 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_5 =="year"~ as.character(year(Datetime)), 
+                                       input$time_choice_box_5 =="month"~ as.character(strftime(Datetime, "%b")),
+                                       input$time_choice_box_5 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_5 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_5 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -180,15 +180,15 @@ server <- function(input,output){
   
   Actualdata_6 <- reactive({ # Reactive data table is referenced in the ggplot.
     Actualdata6 <- combined_results %>% # data table
-      select("Actual","Predicted","better_label", "Datetime") %>% 
       # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
       filter(better_label == input$meter_choice_box_6) %>% #selecting user selected buildings
-      mutate("Time_Choice" = case_when(input$time_choice_box_6 =="year"~ format(year(Datetime), format = "%Y"), 
-                                       input$time_choice_box_6 =="month"~ format(strftime(Datetime, "%b"), format = "%b"), 
-                                       input$time_choice_box_6 =="week"~ format(isoweek(Datetime), format ="%W"),
-                                       input$time_choice_box_6 =="weekday"~ format(wday(Datetime), format = "%a"),
-                                       input$time_choice_box_6 =="hour"~ format(hm(Datetime), format = "%R"),
-                                       T ~ as.charater("Time_Choice"))) %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_6 =="year"~ as.character(year(Datetime)), 
+                                       input$time_choice_box_6 =="month"~ as.character(strftime(Datetime, "%b")), 
+                                       input$time_choice_box_6 =="week"~ as.character(isoweek(Datetime)),
+                                       input$time_choice_box_6 =="weekday"~ as.character(wday(Datetime)),
+                                       input$time_choice_box_6 =="hour"~ as.character(hm(Datetime)),
+                                       T ~ as.character("Time_Choice"))) %>% 
+      select( "Time_Choice","Actual","Predicted","better_label") %>% 
       group_by(better_label,Time_Choice) %>%   # grouping by user input for time, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -203,7 +203,7 @@ server <- function(input,output){
   
   output$BuildingActualTotalplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_1())+ #user Time choice on x-axis
-      geom_col(aes(x = Time_Label, y = "Total_Energy_Actual", fill = better_label), show.legend = F)+
+      geom_col(aes(x = Time_Choice, y = "Total_Energy_Actual", fill = better_label), show.legend = F, position = position_dodge())+
       labs(title = paste("Total Energy Consumed for", input$meter_choice_box_1), subtitle = "subtitle here", caption = "Red line is Actual")+
       ylab(paste("Total Energy in 1000 BTUs", input$meter_choice_box_1))   # label rendered from userchoice labels
     
@@ -211,7 +211,7 @@ server <- function(input,output){
   #Average Actual Energy Consumed Plot
   output$BuildingActualAverageplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_2())+ #user Time choice on x-axis
-      geom_line(aes(x = Time_Label, y = "Mean_Energy_Actual", color = better_label, group=1), show.legend = F)+
+      geom_line(aes(x = Time_Choice, y = "Mean_Energy_Actual", color = better_label, group=1), show.legend = F)+
       labs(title = paste("Average Energy Consumed for", input$meter_choice_box_2), subtitle = "subtitle here", caption = "Red line is Actual")+
       ylab(paste("Mean Energy in 1000 BTUs", input$meter_choice_box_2))   # label rendered from userchoice labels
       
@@ -219,7 +219,7 @@ server <- function(input,output){
   
   output$BuildingPredictedTotalplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_3())+ #user Time choice on x-axis
-      geom_col(aes(x = Time_Label, y = "Total_Energy_Predicted", fill = better_label), show.legend = F)+
+      geom_col(aes(x = Time_Choice, y = "Total_Energy_Predicted", fill = better_label), show.legend = F, position = position_dodge())+
       labs(title = paste("Predicted Total Energy Consumed for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Green is predicted")+
       ylab(paste("Total Energy in 1000 BTUs", input$meter_choice_box_3))   # label rendered from userchoice labels
     
@@ -227,7 +227,7 @@ server <- function(input,output){
   
   output$BuildingPredictedAverageplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_4())+ #user Time choice on x-axis
-      geom_line(aes(x = Time_Label, y = "Mean_Energy_Predicted", color = better_label, group=1), show.legend = F)+
+      geom_line(aes(x = Time_Choice, y = "Mean_Energy_Predicted", color = better_label, group=1), show.legend = F)+
       labs(title = paste("Predicted Average Energy Consumed for", input$meter_choice_box_4), subtitle = "subtitle here", caption = "Green is predicted")+
       ylab(paste("Mean Energy in 1000 BTUs", input$meter_choice_box_4))   # label rendered from userchoice labels
     
@@ -235,8 +235,8 @@ server <- function(input,output){
   
   output$BuildingComparedTotalplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_5())+ #user Time choice on x-axis
-      geom_col(aes(x = Time_Label, y = "Total_Energy_Actual"), fill = "red", show.legend = F)+
-      geom_col(aes(x = Time_Label, y = "Total_Energy_Predicted"), fill = "green", show.legend = F)+
+      geom_col(aes(x = Time_Choice, y = "Total_Energy_Actual"), fill = "red", show.legend = F, position = position_dodge())+
+      geom_col(aes(x = Time_Choice, y = "Total_Energy_Predicted"), fill = "green", show.legend = F, position = position_dodge())+
       labs(title = paste("Comparing Average Energy Consumed for", input$meter_choice_box_5), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab(paste("Mean Energy in 1000 BTUs", input$meter_choice_box_5))   # label rendered from userchoice labels
     
@@ -245,8 +245,8 @@ server <- function(input,output){
   
   output$BuildingComparedAverageplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_6())+ #user Time choice on x-axis
-      geom_line(aes(x = Time_Label, y = "Mean_Energy_Actual", group=1), color = "red", show.legend = F)+
-      geom_line(aes(x = Time_Label, y = "Mean_Energy_Predicted", group=1), color = "green", show.legend = F)+
+      geom_line(aes(x = Time_Choice, y = "Mean_Energy_Actual", group=1), color = "red", show.legend = F)+
+      geom_line(aes(x = Time_Choice, y = "Mean_Energy_Predicted", group=1), color = "green", show.legend = F)+
       labs(title = paste("Comparing Average Energy Consumed for", input$meter_choice_box_6), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
       ylab(paste("Mean Energy in 1000 BTUs", input$meter_choice_box_6))   # label rendered from userchoice labels
     
