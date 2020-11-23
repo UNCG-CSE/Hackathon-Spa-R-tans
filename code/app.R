@@ -32,7 +32,9 @@ str(meter_choices)
 #glimpse(combined_results)
 
 ui <- navbarPage("Spa-R-tans' Energy Consumption",
-                   #create tab navigation for task 1.1
+                 tags$head(
+                   tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")),  
+                 #create tab navigation for task 1.1
                    navbarMenu("Where will Spartan Energy Consumpution Be?",
                                 tabPanel("Total Energy Consumption", value = 1,
                                          box(selectInput("meter_choice_box_1","Choose Building",

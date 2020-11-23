@@ -69,6 +69,8 @@ end_date<-max(combined_results$Datetime)
 # What does the dashboard look like?
 
 ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.min.css")),
   
   ### HEADER ------------
   
