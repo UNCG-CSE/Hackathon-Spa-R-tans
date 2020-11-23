@@ -161,11 +161,15 @@ server <- function(input,output){
     Actualdata6
   })
   
+  
+  
+  ######################################################################################################
+  
   # Adapt code to if they select tabs 2, 4, or 6 and possibly actual /predicted
   #Average Actual Energy Consumed Plot
   output$BuildingActualAverageplot<- renderPlot({ #render a plot using the Actual Averages
     ggplot(Actualdata_2())+ #user Time choice on x-axis
-      geom_line(aes(x = "Time_Label", y = "Mean_Energy_Actual", color = "better_label"), show.legend = F)+
+      geom_line(aes(x = Time_Label, y = Mean_Energy_Actual, color = better_label), show.legend = T)+
       labs(title = paste("Average Energy Consumed for", input$meter_choice_box_2), subtitle = "subtitle here", caption = "Red line is Actual")+
       ylab(paste("Mean Energy in 1000 BTUs", input$meter_choice_box_2))   # label rendered from userchoice labels
       
