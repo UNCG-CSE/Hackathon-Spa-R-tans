@@ -14,10 +14,11 @@ pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT)
 
 # reading in the data
 
-combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
+#combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
                                                  col_types = cols(X1 = col_skip()))
-#combined_results <- read_csv("combined_results.csv", 
-#                             col_types = cols(X1 = col_skip()))
+
+combined_results <- read_csv("combined_results.csv", 
+                             col_types = cols(X1 = col_skip()))
 
 
 combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
@@ -94,7 +95,7 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                   selectInput("time_choice_box_1", "Choose Time aggredation" , c("Day of the month",
                                                                                  "Week of the year","Month"),
                               selected = "Month"),),
-              box(plotOutput("task_1.1_plot"),width = "auto")
+              box(plotOutput("task_1.1_plot"),width = "auto"))
               
               
               
@@ -124,12 +125,12 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
       tabItem("Data_Table", # leaving this page empty for now
               
               h1("this is an empty page"),
-              box(selectInput("meter_choice_box_4","Choose builing to display",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
+              box(selectInput("meter_choice_box_4","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               DT::dataTableOutput("thing")
               
       )
     )
-  ))
+  )
 
 server <- function(input,output){
   
@@ -201,6 +202,16 @@ server <- function(input,output){
     
   })
   
+  output$thing <- renderDataTable({
+    data_2 <- data_2() 
+    
+    data_2
+  })
+  
+}
+
+shinyApp(ui = ui, server = server)
+  
   # TASK 2 PLOT THINGS
   #   output$meter_choice_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
   #      
@@ -215,14 +226,7 @@ server <- function(input,output){
   
   
   
-  output$thing <- renderDataTable({
-    data_2 <- data_2() 
-    
-    data_2
-  })
   
-}
 
-shinyApp(ui = ui, server = server)
 
 
