@@ -1,0 +1,8 @@
+In this file, we are using data collected by UNCG of meter readings for various meetings on campus. This dashboard will update with data included in files combined from all of the meter readings provided. 
+This dashboard was created using R commands and the RStudio Platform.
+In order to begin, run the File_Combination.Rmd to recreate the combined_results csv. file. 
+This file path will be required in order to utilize the spaRtan_semantic_dashboard.R file.
+This project was funded by GreenFund and sponsored by UNCG.
+The ui-contains the elements visible to the user. 
+The server contains the data tables first and followed by the plots created with the ggplot2 platform. 
+
