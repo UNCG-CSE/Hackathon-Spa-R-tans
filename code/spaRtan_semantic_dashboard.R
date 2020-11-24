@@ -1,5 +1,5 @@
 if (!require(pacman)) install.packages("pacman") 
-pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT,dashboardthemes)
+pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT,dashboardthemes,zoo)
 
 #detach("package:shiny.semantic",unload = T)
 #detach("package:semantic.dashboard", unload = T)
@@ -189,7 +189,9 @@ customTheme <- shinyDashboardThemeDIY(
 
 
 # Define UI ----------
-
+`+.uneval` <- function(a,b) {
+  `class<-`(modifyList(a,b), "uneval")
+}
 
 # What does the dashboard look like?
 
@@ -230,11 +232,12 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                               c("Mean_Energy_Actual","Mean_Energy_Predicted",
                                 "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted"),
                   wellPanel(
-                  dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date))),
+                  dateRangeInput("daterange_1", "Filter by date", start = as.Date(start_date), end = as.Date(end_date)),
+                  box(plotOutput("task_1.1_plot"),width = "auto")),
                   selectInput("time_choice_box_1", "Choose Time aggredation" , c("year",
-                                                                                 "month"),
-                              selected = "month")),
-              box(plotOutput("task_1.1_plot"),width = "auto")),
+                                                                                 "month","day","hour"),
+                              selected = "month"))),
+              #box(plotOutput("task_1.1_plot"),width = "auto")),
       
     tabItem("task_2",# this links back to the sidebar item :) 
             
@@ -286,17 +289,20 @@ server <- function(input,output){
     
   })
   data_1.1 <- reactive({ # this is referenced in the ggplot. 
-    data <- combined_results %>% filter(better_label == input$meter_choice_box_1) %>% 
-      select("Actual","Predicted","Hour","Datetime","better_label") %>% 
-      mutate("Time_Choice" = case_when(input$time_choice_box_1 == "year" ~ year(Datetime),
-                                       input$time_choice_box_1 == "month" ~ month(Datetime))) %>% 
+
+    data <- combined_results %>% filter(better_label == input$meter_choice_box_1,
+                                        Datetime >= input$daterange_1[1] & Datetime <= input$daterange_1[2]) %>% 
+      select("Actual","Predicted","Datetime","better_label") %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_1 == "year" ~ floor_date(as.Date(Datetime),"year"),
+                                       input$time_choice_box_1 == "month" ~ floor_date(as.Date(Datetime),"month"),
+                                       input$time_choice_box_1 == "day" ~ floor_date(as.Date(Datetime),"day",
+                                       input$time_choice_box_1 == "hour" ~ hour(Datetime))))%>% # combines months 
       group_by(better_label,Time_Choice) %>%   # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
                 "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" =  sum(Predicted))
     # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier
-    
-    data
+
     
     
   })
@@ -313,8 +319,9 @@ server <- function(input,output){
   
   
   output$task_1.1_plot <- renderPlot({
-    ggplot(data_1.1(),aes(x = Time_Choice, color = better_label)) + # ggplot, year on x axis
+    ggplot(data_1.1(),aes(x = Time_Choice, group = better_label, color = better_label)) + # ggplot, year on x axis
       geom_line(aes_string(y = input$agg_level),show.legend = T)+
+      scale_x_date(date_labels = "%m-%Y")+ 
       theme_minimal()+ # random theme
       labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_1),
            caption = "Red line is Actual, Green is predicted",color = "Building/Meter")+
