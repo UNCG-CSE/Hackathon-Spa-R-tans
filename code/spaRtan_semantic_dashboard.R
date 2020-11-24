@@ -275,6 +275,8 @@ server <- function(input,output){
     
     
   })
+  
+  ##################DONT CHANGE############################
   data_1.1 <- reactive({ # this is referenced in the ggplot. 
 
     data <- combined_results %>% filter(better_label == input$meter_choice_box_1,
@@ -294,6 +296,7 @@ server <- function(input,output){
     
   })
   
+  #1.2#
   data_2 <- reactive({ # this is referenced in the ggplot. 
     data2 <- combined_results %>% filter(better_label == input$meter_choice_box_4) %>% 
       group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
@@ -319,8 +322,13 @@ server <- function(input,output){
   })
   
   # this plot will go the the "task_1" page :)
+<<<<<<< HEAD
   
   output$task_1.2_plot <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+=======
+  ####TASK 1.2####
+  output$meter_choice_plot_3 <- renderPlot({ # render a plot, the meter_choice_plot, which is found in task_1 tab
+>>>>>>> 8eddde75953b9e577756b6f84121abe8b17bd746
     
     ggplot(data_1.2(),aes(x = Time_Label, color = better_label)) + # ggplot, year on x axis
       geom_line(aes(y = `Mean_Energy_Actual`),show.legend = T)+ # actual both on y axis
