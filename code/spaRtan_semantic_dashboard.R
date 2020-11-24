@@ -1,17 +1,12 @@
 if (!require(pacman)) install.packages("pacman") 
-pacman::p_load(tidyverse,lubridate,shiny,shinydashboard,DT,dashboardthemes,zoo)
+pacman::p_load(tidyverse,dygraphs,lubridate,shiny,shinydashboard,DT,dashboardthemes,zoo,plotly)
 
 #detach("package:shiny.semantic",unload = T)
 #detach("package:semantic.dashboard", unload = T)
 
-# NOTES and TASKS:
 
 
-## CURRENTLY APP IS RUNNING, BUT PLOT WILL NOT RENDER SINCE FILTER THINK NOT WORKING. PERHAPS NOT REDER PLOT, MAYBE RENDER DATASET OR SOMTHING idk!
-
-
-
-
+#### CHANGE DIRECTORY TO LOCAL GIT REPO!
 # reading in the data
 
 combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-19/Git/Hackathon-Spa-R-tans/code/combined_results.csv", 
@@ -21,8 +16,9 @@ combined_results <- combined_results <- read_csv("C:/Users/macia/Documents/MSIA-
 #                             col_types = cols(X1 = col_skip()))
 
 
-combined_results<-combined_results %>% mutate("Hour" = hour(Datetime))
-glimpse(combined_results)
+combined_results<-combined_results %>% mutate("Hour" = hour(Datetime),
+                                              Datetime = ymd_hms(Datetime))
+#glimpse(combined_results)
 
 #getwd()
 #rm(combined_results2)
@@ -198,9 +194,9 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   
   dashboardHeader(title = shinyDashboardLogo(
     theme = "grey_dark",
-    boldText = "Green Fund Hackathon:",
-    mainText = "Energy Dashboard",
-    badgeText = "V1.1"), titleWidth = 350), # Title of the dashboard
+    boldText = "Energy Dashboard:",
+    mainText = "Funded by the UNCG Green Fund",
+    badgeText = "V1.1"), titleWidth = 450), # Title of the dashboard
   
   ### SIDE BAR -----------
   
@@ -210,9 +206,9 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
       
       # First arg is what is seen on the dashboard, Second indicates to output where to show output
       # icon is not needed, just adds a little icon. 
-      menuItem("Task 1.1: ", tabName = "task_1",icon = icon("signal")),
-      menuItem("Task 1.2: What are we supposed to do?", tabName = "task_1_2", icon = icon("dashboard"))
-      
+      menuItem("Task 1.1 ", tabName = "task_1",icon = icon("signal")),
+      menuItem("Task 1.2", tabName = "task_1_2", icon = icon("dashboard")),
+      menuItem("Task 2.0", tabName = "task_2_0", icon = icon("signal"))
     )
   ),
   
@@ -221,8 +217,8 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
   dashboardBody(
     customTheme,
     tabItems(
+      #### PAGE 1
       tabItem("task_1",
-              h1("Static plot of energy consumption"),
               box(width = 10,title = "Select Plot Parameters",selectInput("meter_choice_box_1","Choose Building",meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
                   selectInput("agg_level", "Choose sum or mean energy",
                               c("Mean_Energy_Actual","Mean_Energy_Predicted",
@@ -234,16 +230,8 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                 dateRangeInput("daterange_1", "", start = as.Date(start_date), end = as.Date(end_date)),
                 plotOutput("task_1.1_plot"),width = "auto")),
       #box(plotOutput("task_1.1_plot"),width = "auto")),
-      
-      tabItem("task_1_2",# this links back to the sidebar item :) 
-              
-              h1("Create a real-time interactive plot of energy consumption and prediction"), ## adding simple text...
-              h3("1.1 Static Plot"),
-              h4("Needs to be reactive to several use inputs. Time on the horizonal axes, and energy consumption on the vertical axes.
-                             Allow the user to chose 4 different units of time, within each, allow them to plot total consumption or average hourly consumption"),
-              
-              h3("1.2 Predictive plot"),
-              h4("For everyplot above, allow user to plot predicted values"),
+      #### Page 2
+      tabItem("task_1_2",# this links back to the sidebar item :)
               
               # Creating a visual box for user input
               # First arg is what renderplot will use, second is what shows on the dashbooard
@@ -253,9 +241,26 @@ ui <- dashboardPage(#skin = "blue" , # find appropriate uncg color?
                                                                                "Week of the year","Month"), selected = "Month")),
               box(selectInput("meter_choice_box_3","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T)),
               
-              box(plotOutput("task_1.2_plot"), width = "auto")))
-  ))
-
+              box(plotOutput("task_1.2_plot"), width = "auto")),
+      tabItem("task_2_0",
+              
+              wellPanel(
+              selectInput("meter_choice_box_4","Choose builing to display", meter_choices, selected = "Elliott University Center (040) - Main Meter", multiple = T),
+              selectInput("agg_level_2", "Choose sum or mean energy",
+                          c("Mean_Energy_Actual","Mean_Energy_Predicted",
+                            "Total_Energy_Actual", "Total_Energy_Predicted"), selected = "Total_Energy_Predicted"),
+              selectInput("time_choice_box_4", "Choose Time aggregation" , c("year",
+                                                                             "month","day","hour"), selected = "month"),
+              plotlyOutput("task_2.0_plot")
+              ) # well planel 
+              
+              
+              
+              ) # tab2_0
+      
+      ) #items
+    ) # body
+  ) # page
 server <- function(input,output){
   
   
@@ -282,8 +287,7 @@ server <- function(input,output){
       select("Actual","Predicted","Datetime","better_label") %>% 
       mutate("Time_Choice" = case_when(input$time_choice_box_1 == "year" ~ floor_date(as.Date(Datetime),"year"),
                                        input$time_choice_box_1 == "month" ~ floor_date(as.Date(Datetime),"month"),
-                                       input$time_choice_box_1 == "day" ~ floor_date(as.Date(Datetime),"day",
-                                                                                     input$time_choice_box_1 == "hour" ~ hour(Datetime))))%>% # combines months 
+                                       input$time_choice_box_1 == "day" ~ floor_date(as.Date(Datetime),"day")))%>% # combines months 
       group_by(better_label,Time_Choice) %>%   # grouping by year, so this will be a year plot, could ask them for input
       # summarizeing the mean for actual and predicted
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
@@ -294,14 +298,32 @@ server <- function(input,output){
     
   })
   
+  #head(combined_results)
   data_2 <- reactive({ # this is referenced in the ggplot. 
-    data2 <- combined_results %>% filter(better_label == input$meter_choice_box_4) %>% 
-      group_by(Year,better_label) %>%  # grouping by year, so this will be a year plot, could ask them for input
-      # summarizeing the mean for actual and predicted
+    data_temp <- combined_results %>% filter(better_label == input$meter_choice_box_4,
+                                             Datetime >= "2020-01-01" & Datetime <= end_date) %>% 
+      select("Actual","Predicted","Datetime","better_label") %>% 
+      mutate("Time_Choice" = case_when(input$time_choice_box_4 == "year" ~ floor_date(as.Date(Datetime),"year"),
+                                       input$time_choice_box_4 == "month" ~ floor_date(as.Date(Datetime),"month"),
+                                       input$time_choice_box_4 == "day" ~ floor_date(as.Date(Datetime),"day"))) %>% 
+  
+      group_by(better_label,Time_Choice) %>%  
       summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
-                "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" = sum(Predicted))
-    # fitering the dataset for their selected label -> could do this before hand maybe before running stats, would be easier?
-    data2
+                "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" =  sum(Predicted))# grouping by year, so this will be a year plot, could ask them for input
+      # summarizeing the mean for actual and predicted
+    data_temp
+  })
+  
+  data_3 <- reactive({
+     # this is referenced in the ggplot. 
+      data_temp <- combined_results %>% filter(better_label == input$meter_choice_box_4,
+                                               Datetime >= "2020-01-01" & Datetime <= end_date) %>% 
+        select("Actual","Predicted","Datetime","better_label") %>% 
+        group_by(better_label,Datetime) %>%  
+        summarize("Mean_Energy_Actual" = mean(Actual), "Mean_Energy_Predicted" = mean(Predicted),
+                  "Total_Energy_Actual" = sum(Actual), "Total_Energy_Predicted" =  sum(Predicted))# grouping by year, so this will be a year plot, could ask them for input
+      # summarizeing the mean for actual and predicted
+      data_temp
   })
   
   
@@ -310,8 +332,8 @@ server <- function(input,output){
       geom_line(aes_string(y = input$agg_level),show.legend = T)+
       scale_x_date(date_labels = "%m-%Y")+ 
       theme_minimal()+ # random theme
-      labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_1),
-           caption = "Red line is Actual, Green is predicted",color = "Building/Meter")+
+      labs(title = "Energy consumtion for selected building/buildings", subtitle = "Energy in KwH" , color =  "Building/Meter") + 
+      xlab("Date")+
       ylab(if_else(input$agg_level == "Mean_Energy_Actual","Mean Energy Used",
                    if_else(input$agg_level == "Mean_Energy_Predicted","Mean Energy Predicted",
                            if_else(input$agg_level == "Total_Energy_Actual","Total Energy Used",
@@ -326,8 +348,40 @@ server <- function(input,output){
       geom_line(aes(y = `Mean_Energy_Actual`),show.legend = T)+ # actual both on y axis
       geom_line(aes(y = `Mean_Energy_Predicted`), linetype = "dashed",show.legend = T)+ # predict
       theme_minimal()+ # random theme
-      labs(title = paste("Energy for", input$meter_choice_box_3), subtitle = "subtitle here", caption = "Red line is Actual, Green is predicted")+
+      labs(title = paste("Energy for", input$meter_choice_box_3),
+           subtitle = "Solid Line is actual values, Dotted Line is predicted values", color =  "Building/Meter" )+
       ylab("Mean Energy")   # render labels
+    
+  })
+  
+  output$task_2.0_plot <- renderPlotly({
+    if(input$time_choice_box_4 %in% c("year","month","day")){
+      
+    ggplot(data_2(),aes(x = Time_Choice, color = better_label)) + # ggplot, year on x axis
+      geom_line(aes_string(y = input$agg_level_2),show.legend = T)+
+      #scale_x_date(date_labels = "%m-%Y")+ 
+      theme_minimal()+ # random theme
+      labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_4),
+           caption = "Red line is Actual, Green is predicted",color = "Building/Meter")+
+      ylab(if_else(input$agg_level_2 == "Mean_Energy_Actual","Mean Energy Used",
+                   if_else(input$agg_level_2 == "Mean_Energy_Predicted","Mean Energy Predicted",
+                           if_else(input$agg_level_2 == "Total_Energy_Actual","Total Energy Used",
+                                   if_else(input$agg_level_2 == "Total_Energy_Predicted","Total Energy Predicted","Nothing")))))
+    }else if (input$time_choice_box_4 == "hour"){
+      
+      ggplot(data_3(),aes(x = Datetime, color = better_label)) + # ggplot, year on x axis
+        geom_line(aes_string(y = input$agg_level_2),show.legend = T)+
+        #scale_x_date(date_labels = "%m-%Y")+ 
+        theme_minimal()+ # random theme
+        labs(title = "Energy consumtion for selected building/buildings", subtitle = paste0("Buildings: ", input$meter_choice_box_4),
+             caption = "Red line is Actual, Green is predicted",color = "Building/Meter")+
+        ylab(if_else(input$agg_level_2 == "Mean_Energy_Actual","Mean Energy Used",
+                     if_else(input$agg_level_2 == "Mean_Energy_Predicted","Mean Energy Predicted",
+                             if_else(input$agg_level_2 == "Total_Energy_Actual","Total Energy Used",
+                                     if_else(input$agg_level_2 == "Total_Energy_Predicted","Total Energy Predicted","Nothing")))))
+      
+    }
+    
     
   })
   
@@ -337,4 +391,5 @@ server <- function(input,output){
 
 shinyApp(ui = ui, server = server)
 
-              
+
+            
